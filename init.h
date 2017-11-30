@@ -6,19 +6,45 @@
 #include <stdio.h>
 #define _XM_NO_INTINSICS_
 #define XM_NO_ALIGNMENT
-#include <xnamath.h>
+//#include <xnamath.h>
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h>
+#include "player.h"
+#include "WindowInput.h"
+
+using namespace DirectX;
 
 class Init
 {
 	public:
-		HRESULT InitialiseWindow(HINSTANCE hInstance, int nCmdShow);
+		HRESULT InitialiseWindow(HINSTANCE hInstance, int nCmdShow, WNDPROC WdwProc);
 		HRESULT InitialiseD3D();
 		HRESULT InitialiseGraphics();
 
 		Init();
 		~Init();
 		void ShutdownD3D();
+
+		//Getter
+		ID3D11Device*				GetDevice();
+		ID3D11DeviceContext*		GetDeviceContext();
+		ID3D11RenderTargetView*		GetBackBuffer();
+		ID3D11Buffer*				GetVertexBuffer();
+		ID3D11Buffer*				GetTransformationBuffer();
+		ID3D11Buffer*				GetLightBuffer();
+		ID3D11DepthStencilView*		GetZBuffer();
+		ID3D11SamplerState*			GetSampler();
+		ID3D11ShaderResourceView*	GetTexture();
+		IDXGISwapChain*				GetSwapChain();
+		Player*						GetPlayer();
+		//XMVECTOR					GetDirectionalLightDirection();
+		//XMVECTOR					GetDirectionalLightColor();
+		//XMVECTOR					AmbientLightColor();
+
+
+
 	private:
+		
 		HINSTANCE g_hInst;
 		HWND	  g_hWnd;
 
@@ -40,20 +66,7 @@ class Init
 		ID3D11SamplerState*				g_pSampler; // Array?
 		ID3D11DepthStencilView*			g_pZBuffer;
 
-		//Camera...
 		//Lightvectors(directional_light_shines_from, directional_light_color, ambient_light_color)
-
-		struct TransformationBuffer
-		{
-			XMMATRIX WorldViewProjection;  // 64 Bytes
-		};
-
-		struct LightBuffer
-		{
-			XMVECTOR directional_light_vector; //16 Bytes
-			XMVECTOR directional_light_color; //16 Bytes
-			XMVECTOR ambient_light_color; //16 Bytes
-		};
 
 		struct POS_COL_TEX_NORM_VERTEX
 		{
