@@ -2,65 +2,65 @@
 
 int (WINAPIV* __vsnprintf_s)(char*, size_t, const char*, va_list) = _vsnprintf;
 
-//////////////////////////////////////////////////////////////////////////////////////
-// Called every time the application receives a message || NEEDS TO BE GLOBAL!!!
-//////////////////////////////////////////////////////////////////////////////////////
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	PAINTSTRUCT ps;
-	HDC hdc;
-
-	switch (message)
-	{
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-		EndPaint(hWnd, &ps);
-		break;
-
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-
-		// 0x44 = 'a'
-
-		//case WM_KEYDOWN:
-		//	if (wParam == VK_ESCAPE)
-		//		DestroyWindow(g_hWnd);
-		//	if (wParam == 0x41) // Key 'a'
-		//		g_pCamera->Strafe(-0.5);
-		//	if (wParam == 0x44) // Key 'd'
-		//		g_pCamera->Strafe(0.5);
-		//	if (wParam == 0x57) // Key 'w'
-		//		g_pCamera->Forward(1);
-		//	if (wParam == 0x53) // Key 's'
-		//		g_pCamera->Forward(-1);
-		//	if (wParam == 0x45) // Key 'e'
-		//		g_pCamera->Rotate(2);
-		//	if (wParam == 0x51) // Key 'q'
-		//		g_pCamera->Rotate(-2);
-		//	if (wParam == VK_RIGHT)
-		//		lightRotY += 2;
-		//	if (wParam == VK_LEFT)
-		//		lightRotY -= 2;
-		//	if (wParam == VK_UP)
-		//		lightRotX += 2;
-		//	if (wParam == VK_DOWN)
-		//		lightRotX += -2;
-		//	return 0;
-
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-
-	return 0;
-}
+////////////////////////////////////////////////////////////////////////////////////////
+//// Called every time the application receives a message || NEEDS TO BE GLOBAL!!!
+////////////////////////////////////////////////////////////////////////////////////////
+//LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+//{
+//	PAINTSTRUCT ps;
+//	HDC hdc;
+//
+//	switch (message)
+//	{
+//	case WM_PAINT:
+//		hdc = BeginPaint(hWnd, &ps);
+//		EndPaint(hWnd, &ps);
+//		break;
+//
+//	case WM_DESTROY:
+//		PostQuitMessage(0);
+//		break;
+//
+//		// 0x44 = 'a'
+//
+//		//case WM_KEYDOWN:
+//		//	if (wParam == VK_ESCAPE)
+//		//		DestroyWindow(g_hWnd);
+//		//	if (wParam == 0x41) // Key 'a'
+//		//		g_pCamera->Strafe(-0.5);
+//		//	if (wParam == 0x44) // Key 'd'
+//		//		g_pCamera->Strafe(0.5);
+//		//	if (wParam == 0x57) // Key 'w'
+//		//		g_pCamera->Forward(1);
+//		//	if (wParam == 0x53) // Key 's'
+//		//		g_pCamera->Forward(-1);
+//		//	if (wParam == 0x45) // Key 'e'
+//		//		g_pCamera->Rotate(2);
+//		//	if (wParam == 0x51) // Key 'q'
+//		//		g_pCamera->Rotate(-2);
+//		//	if (wParam == VK_RIGHT)
+//		//		lightRotY += 2;
+//		//	if (wParam == VK_LEFT)
+//		//		lightRotY -= 2;
+//		//	if (wParam == VK_UP)
+//		//		lightRotX += 2;
+//		//	if (wParam == VK_DOWN)
+//		//		lightRotX += -2;
+//		//	return 0;
+//
+//	default:
+//		return DefWindowProc(hWnd, message, wParam, lParam);
+//	}
+//
+//	return 0;
+//}
 
 Init::Init()
 {
-
+	
 }
 
-HRESULT Init::InitialiseWindow(HINSTANCE hInstance, int nCmdShow)
+HRESULT Init::InitialiseWindow(HINSTANCE hInstance, int nCmdShow, WNDPROC WndProc)
 {
 	//Initialise the application window
 	
@@ -372,8 +372,8 @@ HRESULT Init::InitialiseGraphics()
 	hr = g_pD3DDevice->CreateInputLayout(iedesc, ARRAYSIZE(iedesc), VS->GetBufferPointer(), VS->GetBufferSize(), &g_pInputLayout);
 	if (FAILED(hr)) { return hr; }
 
-	////Create and set a camera instance
-	//g_pCamera = new Camera(0.0f, 0.0f, 0.0f, 0.0f);
+	//Create and set a Player instance
+	g_pPlayer = new Player(0.0f, 0.0f, 0.0f, 0.0f);
 	
 	g_pImmediateContext->IASetInputLayout(g_pInputLayout);
 
@@ -399,7 +399,7 @@ void Init::ShutdownD3D()
 	if (g_pBackBufferRTView) g_pBackBufferRTView->Release();
 	if (g_pTransformationBuffer) g_pTransformationBuffer->Release();
 	if (g_pLightBuffer) g_pLightBuffer->Release();
-	//if(g_pCamera) delete g_pCamera;
+	if(g_pPlayer) delete g_pPlayer;
 }
 
 Init::~Init()
@@ -407,3 +407,19 @@ Init::~Init()
 	//call clean up function
 	ShutdownD3D();
 }
+
+//___________________________________________________Getter
+ID3D11Device* Init::GetDevice() { return g_pD3DDevice; }
+ID3D11DeviceContext* Init::GetDeviceContext() { return g_pImmediateContext; }
+ID3D11RenderTargetView* Init::GetBackBuffer() { return g_pBackBufferRTView; }
+ID3D11DepthStencilView* Init::GetZBuffer() { return g_pZBuffer; }
+ID3D11Buffer* Init::GetVertexBuffer() { return g_pVertexBuffer; }
+ID3D11Buffer* Init::GetTransformationBuffer() { return g_pTransformationBuffer; }
+ID3D11Buffer* Init::GetLightBuffer() { return g_pLightBuffer; }
+ID3D11ShaderResourceView* Init::GetTexture() { return g_pTexture; }
+ID3D11SamplerState* Init::GetSampler() { return g_pSampler; }
+IDXGISwapChain* Init::GetSwapChain() { return g_pSwapChain; }
+//XMVECTOR Init::GetDirectionalLightDirection(){return g_directionalLightDirection;}
+//XMVECTOR Init::GetDirectionalLightColor(){return g_directionalLightColor;}
+//XMVECTOR Init::GetAmbientLightColor(){return g_ambientLightColor;}
+Player* Init::GetPlayer(){return g_pPlayer;}

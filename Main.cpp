@@ -9,6 +9,9 @@
 
 #include "init.h";
 #include "datamanager.h";
+#include "WindowInput.h"
+
+WindowInput* g_pWindowInput;
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -20,12 +23,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	//create object instances
+	//Init instance
 	Init* init = new Init();
-	DataManager* datamanager = new DataManager();
 
 	//initialise application window
-	if (FAILED(init->InitialiseWindow(hInstance, nCmdShow)))
+	if (FAILED(init->InitialiseWindow(hInstance, nCmdShow, g_pWindowInput->WndProc)))
 	{
 		DXTRACE_MSG("Failed to create Window");
 		return 0;
@@ -45,6 +47,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
+	DataManager* datamanager = new DataManager(init->GetDevice(),init->GetDeviceContext(), init->GetSwapChain(), init->GetBackBuffer(),init->GetVertexBuffer(), init->GetTransformationBuffer(),
+												init->GetLightBuffer(), init->GetZBuffer(), init->GetTexture(), init->GetSampler(), init->GetPlayer());
 
 	// Main message loop
 	MSG msg = { 0 };
