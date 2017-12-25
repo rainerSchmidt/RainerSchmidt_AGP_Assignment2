@@ -15,19 +15,21 @@ cbuffer CBufferTransformation
 
 cbuffer CBufferLight
 {
-	matrix LightWVPMatrix; // 64 Bytes
 	float4 directional_light_vector; // 16 Bytes
 	float4 directional_light_color; // 16 Bytes
 	float4 ambient_light_color; // 16 Bytes
 };
 
-VOut VShader(float4 position : POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD, float3 normal : NORMAL)
+VOut VShader(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 normal : NORMAL)
 {
 	VOut output;
 
 	output.position = mul(WVPMatrix, position);
-	color.g = 1;
-	output.color = color;
+
+	float diffuseAmount = dot(directional_light_vector, normal);
+	diffuseAmount = saturate(diffuseAmount);
+
+	output.color = ambient_light_color + (directional_light_color * diffuse_amount);
 
 	output.texcoord = texcoord;
 
@@ -36,5 +38,5 @@ VOut VShader(float4 position : POSITION, float4 color : COLOR, float2 texcoord :
 
 float4 PShader(float4 position : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD) : SV_TARGET
 {
-	return color;
+	return color * texture0.Sample(sampler0, texcoord);
 }

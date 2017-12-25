@@ -37,15 +37,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
-	////initialise graphics elements
-	//if (FAILED(init->InitialiseGraphics()))
-	//{
-	//	DXTRACE_MSG("Failed to initialise graphics");
-	//	return 0;
-	//}
-
+	//initialise graphics elements
 	Renderer* renderer = new Renderer(init->GetDevice(), init->GetDeviceContext(), init->GetSwapChain(), init->GetBackBuffer(), init->GetZBuffer());
-	
+	if (FAILED(renderer->InitialiseGraphicsElements()))
+	{
+		DXTRACE_MSG("Failed to initialise graphics");
+		//	return 0;
+	}
 
 	// Main message loop
 	MSG msg = { 0 };

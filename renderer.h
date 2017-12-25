@@ -1,5 +1,7 @@
 #pragma once
 #include <d3d11.h>
+#include <d3dx11.h>
+#include <dxerr.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #define _XM_NO_INTINSICS_
@@ -13,10 +15,12 @@ class Renderer
 	public:
 		Renderer(ID3D11Device* D3DDevice, ID3D11DeviceContext* DeviceContext, IDXGISwapChain* SwapChain, ID3D11RenderTargetView* BackBuffer,
 					ID3D11DepthStencilView* ZBuffer);
+
+		HRESULT InitialiseGraphicsElements();
 		void RenderFrame();
 		~Renderer();
 	private:
-
+		
 		void CleanUp();
 		void ClearBackBuffer();
 		void SetLighting();
@@ -27,18 +31,6 @@ class Renderer
 		void SetWorldViewProjection();
 		void SetContext();
 		void Draw();
-
-		struct TransformationBuffer
-		{
-			XMMATRIX WorldViewProjection;  // 64 Bytes
-		};
-
-		struct LightBuffer
-		{
-			XMVECTOR directional_light_vector; //16 Bytes
-			XMVECTOR directional_light_color; //16 Bytes
-			XMVECTOR ambient_light_color; //16 Bytes
-		};
 
 		struct POS_COL_TEX_NORM_VERTEX
 		{
@@ -53,12 +45,24 @@ class Renderer
 		IDXGISwapChain*					g_pSwapChain = NULL;
 
 		ID3D11RenderTargetView*			g_pBackBufferRTView = NULL;
-
-		ID3D11Buffer*					g_pVertexBuffer;
 		ID3D11DepthStencilView*			g_pZBuffer;
 
-		DirectX::XMMATRIX projection, world, view;
-		TransformationBuffer g_transBufferValues;
+		//Models 
+		//...
+		
+		//SceneNodes
+		//...
+
+		//ID3D11VertexShader *	g_pVShader;
+		//ID3D11PixelShader *		g_pPShader;
+		//ID3D11InputLayout *		g_pInputLayout;
+		//ID3D11Buffer *			g_pTransformationBuffer;
+		//ID3D11Buffer *			g_pLightBuffer;
+		//ID3D11ShaderResourceView* g_pTexture0;
+		//ID3D11SamplerState*		g_pSampler0;
+
+		//DirectX::XMMATRIX projection, world, view;
+		//TransformationBuffer g_transBufferValues;
 };
 
 
