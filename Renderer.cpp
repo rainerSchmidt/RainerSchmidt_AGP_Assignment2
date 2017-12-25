@@ -1,25 +1,14 @@
 #include "renderer.h"
 
 Renderer::Renderer(ID3D11Device* D3DDevice, ID3D11DeviceContext* DeviceContext, IDXGISwapChain* SwapChain, ID3D11RenderTargetView* BackBuffer,
-					ID3D11Buffer* VertexBuffer, ID3D11Buffer* TransformationBuffer, ID3D11Buffer* LightBuffer, ID3D11DepthStencilView* ZBuffer,
-					ID3D11ShaderResourceView* Texture, ID3D11SamplerState* Sampler ,Player* Player//, XMVECTOR DirectionalLightDirection, XMVECTOR DirectionalLightColor, XMVECTOR AmbientLightColor);
-				  )
+					ID3D11DepthStencilView* ZBuffer)
 {
 	g_pD3DDevice = D3DDevice;
 	g_pImmediateContext = DeviceContext;
 	g_pSwapChain = SwapChain;
 	g_pBackBufferRTView = BackBuffer;
-	g_pVertexBuffer = VertexBuffer;
-	g_pTransformationBuffer = TransformationBuffer;
-	g_pLightBuffer = LightBuffer;
 	g_pZBuffer = ZBuffer;
-	g_pTexture = Texture;
-	g_pSampler = Sampler;
-	g_pPlayer = Player;
-	//g_directionalLightDirection = DirectionalLightDirection;
-	//g_directionalLightColor = DirectionalLightColor;
-	//g_ambientLightColor = AmbientLightColor;
-
+	
 }
 
 Renderer::~Renderer()
@@ -46,13 +35,13 @@ void Renderer::SetLighting()
 
 void Renderer::SetVertexBuffer()
 {
-	// Set vertex buffer //03-01
-	UINT stride = sizeof(POS_COL_TEX_NORM_VERTEX);
-	UINT offset = 0;
-	g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
+	//// Set vertex buffer //03-01
+	//UINT stride = sizeof(POS_COL_TEX_NORM_VERTEX);
+	//UINT offset = 0;
+	//g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 
-	/*g_pImmediateContext->PSSetSamplers(0, 1, &g_pSampler);
-	g_pImmediateContext->PSSetShaderResources(0, 1, &g_pTexture);*/
+	//g_pImmediateContext->PSSetSamplers(0, 1, &g_pSampler);
+	//g_pImmediateContext->PSSetShaderResources(0, 1, &g_pTexture);
 }
 
 void Renderer::SetWorldMatrix()
@@ -98,20 +87,20 @@ void Renderer::SetWorldViewProjection()
 	projection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0f), 640.0f / 480.0f, 1.0f, 100.0f);
 	// set view with camera values
 	view = XMMatrixIdentity();
-	view = g_pPlayer->GetViewMatrix();
+	//view = g_pCamera->GetViewMatrix();
 	// set WorldViewProjection
 	g_transBufferValues.WorldViewProjection = world * view * projection;
 }
 
 void Renderer::SetContext()
 {
-	// upload the new values for the constant buffer
-	g_pImmediateContext->UpdateSubresource(g_pTransformationBuffer, 0, 0, &g_transBufferValues, 0, 0);
-	// Set constant buffer to active
-	g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pTransformationBuffer);
+	//// upload the new values for the constant buffer
+	//g_pImmediateContext->UpdateSubresource(g_pTransformationBuffer, 0, 0, &g_transBufferValues, 0, 0);
+	//// Set constant buffer to active
+	//g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pTransformationBuffer);
 
-	// Select which primitive type to use //03-01
-	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//// Select which primitive type to use //03-01
+	//g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void Renderer::Draw()
@@ -124,13 +113,13 @@ void Renderer::Draw()
 void Renderer::RenderFrame()
 {
 	ClearBackBuffer();
-	SetLighting();
+	/*SetLighting();
 	SetVertexBuffer();
 	SetWorldMatrix();
 	SetLightWorldMatrix();
 	SetConstantBuffer();
 	SetWorldViewProjection();
-	SetContext();
+	SetContext();*/
 	Draw();
 
 

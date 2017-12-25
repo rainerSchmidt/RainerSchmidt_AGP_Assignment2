@@ -5,20 +5,18 @@
 #define _XM_NO_INTINSICS_
 #define XM_NO_ALIGNMENT
 //#include <xnamath.h>
-#include "player.h"
 
 using namespace DirectX;
 
 class Renderer
 {
 	public:
-		Renderer(	ID3D11Device* D3DDevice, ID3D11DeviceContext* DeviceContext, IDXGISwapChain* SwapChain, ID3D11RenderTargetView* BackBuffer,
-					ID3D11Buffer* VertexBuffer, ID3D11Buffer* TransformationBuffer, ID3D11Buffer* LightBuffer, ID3D11DepthStencilView* ZBuffer,
-					ID3D11ShaderResourceView* Texture, ID3D11SamplerState* Sampler ,Player* Player//, XMVECTOR DirectionalLightDirection, XMVECTOR DirectionalLightColor, XMVECTOR AmbientLightColor);
-				);
+		Renderer(ID3D11Device* D3DDevice, ID3D11DeviceContext* DeviceContext, IDXGISwapChain* SwapChain, ID3D11RenderTargetView* BackBuffer,
+					ID3D11DepthStencilView* ZBuffer);
 		void RenderFrame();
 		~Renderer();
 	private:
+
 		void CleanUp();
 		void ClearBackBuffer();
 		void SetLighting();
@@ -57,19 +55,9 @@ class Renderer
 		ID3D11RenderTargetView*			g_pBackBufferRTView = NULL;
 
 		ID3D11Buffer*					g_pVertexBuffer;
-		//ID3D11VertexShader*				g_pVertexShader;
-		//ID3D11PixelShader*				g_pPixelShader;
-		//ID3D11InputLayout*				g_pInputLayout;
-		ID3D11Buffer*					g_pTransformationBuffer;
-		ID3D11Buffer*					g_pLightBuffer;
-		ID3D11ShaderResourceView*		g_pTexture; // Array?
-		ID3D11SamplerState*				g_pSampler; // Array?
 		ID3D11DepthStencilView*			g_pZBuffer;
 
-		Player*							g_pPlayer;
-		//Lightvectors(directional_light_shines_from, directional_light_color, ambient_light_color)
-
-		XMMATRIX projection, world, view;
+		DirectX::XMMATRIX projection, world, view;
 		TransformationBuffer g_transBufferValues;
 };
 

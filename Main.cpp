@@ -8,10 +8,7 @@
 //#include <xnamath.h>
 
 #include "init.h";
-#include "datamanager.h";
-#include "WindowInput.h"
-
-WindowInput* g_pWindowInput;
+#include "renderer.h";
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +24,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Init* init = new Init();
 
 	//initialise application window
-	if (FAILED(init->InitialiseWindow(hInstance, nCmdShow, g_pWindowInput->WndProc)))
+	if (FAILED(init->InitialiseWindow(hInstance, nCmdShow)))
 	{
 		DXTRACE_MSG("Failed to create Window");
 		return 0;
@@ -40,15 +37,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
-	//initialise graphics elements
-	if (FAILED(init->InitialiseGraphics()))
-	{
-		DXTRACE_MSG("Failed to initialise graphics");
-		return 0;
-	}
+	////initialise graphics elements
+	//if (FAILED(init->InitialiseGraphics()))
+	//{
+	//	DXTRACE_MSG("Failed to initialise graphics");
+	//	return 0;
+	//}
 
-	DataManager* datamanager = new DataManager(init->GetDevice(),init->GetDeviceContext(), init->GetSwapChain(), init->GetBackBuffer(),init->GetVertexBuffer(), init->GetTransformationBuffer(),
-												init->GetLightBuffer(), init->GetZBuffer(), init->GetTexture(), init->GetSampler(), init->GetPlayer());
+	Renderer* renderer = new Renderer(init->GetDevice(), init->GetDeviceContext(), init->GetSwapChain(), init->GetBackBuffer(), init->GetZBuffer());
+	
 
 	// Main message loop
 	MSG msg = { 0 };
@@ -63,12 +60,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		else
 		{
 			// do something
-			datamanager->Render();
+			renderer->RenderFrame();
 		}
 	}
 
 	//clean up d3d objects
-	delete datamanager;
+	delete renderer;
 	delete init;
 
 	return (int)msg.wParam;

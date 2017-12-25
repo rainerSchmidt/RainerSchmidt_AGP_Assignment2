@@ -26,9 +26,9 @@ VOut VShader(float4 position : POSITION, float4 color : COLOR, float2 texcoord :
 	VOut output;
 
 	output.position = mul(WVPMatrix, position);
-	//color.rgb = 0.7;
-
+	color.g = 1;
 	output.color = color;
+
 	output.texcoord = texcoord;
 
 	return output;
