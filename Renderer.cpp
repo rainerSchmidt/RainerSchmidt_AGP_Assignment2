@@ -20,9 +20,21 @@ Renderer::~Renderer()
 HRESULT Renderer::InitialiseGraphicsElements()
 {
 	//initialise Models
+	g_pModel = new Model(g_pD3DDevice, g_pImmediateContext);
+	g_pModel->LoadObjModel("assets/cube.obj");
 
+	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/sword.png", NULL, NULL, &g_pTexture0, NULL)))
+	{
+		OutputDebugString("There was an error loading the texture file!");
+	}
+	else
+	{
+		g_pModel->SetTexture(g_pTexture0);
+	}
+	
 	//set up Scene Nodes
 
+	g_pText2D = new Text2D("assets/font1.bmp", g_pD3DDevice, g_pImmediateContext);
 	return S_OK;
 }
 
@@ -36,11 +48,27 @@ void Renderer::ClearBackBuffer()
 
 void Renderer::Draw()
 {
+	g_pText2D->AddText("Time", -1.0f, 1.0f, 0.2f);
 	// Draw the vertex buffer to the back buffer //03-01
 	OutputDebugString("Draw");
 
+	XMMATRIX world, view, projection;
+
+	world = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	world *= XMMatrixRotationX(XMConvertToRadians(0.0f));
+	world *= XMMatrixRotationY(XMConvertToRadians(0.0f));
+	world *= XMMatrixRotationZ(XMConvertToRadians(0.0f));
+	world *= XMMatrixTranslation(0.0f, 0.0f, 15.0f);
+
+	view = XMMatrixIdentity();
+
+	projection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0f), 800.0f / 600.0f, 1.0f, 100.0f);
+
+	//Draw Text
+	g_pText2D->RenderText();
+
 	//Draw Models
-	//...
+	g_pModel->Draw(&world, &view, &projection);
 
 	//g_pImmediateContext->Draw(36, 0);
 }
@@ -53,11 +81,14 @@ void Renderer::RenderFrame()
 	SetWorldMatrix();
 	SetLightWorldMatrix();
 	SetConstantBuffer();
-	SetWorldViewProjection();
-	SetContext();*/
+	SetWorldViewProjection();*/
+
+	// Select which primitive type to use //03-01
+	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	Draw();
 
-
+	
 
 	//render all the stuff
 	g_pSwapChain->Present(0, 0);
@@ -76,5 +107,10 @@ void Renderer::CleanUp()
 	if (g_pTransformationBuffer) g_pTransformationBuffer->Release();
 	if (g_pLightBuffer) g_pLightBuffer->Release();*/
 	//if(g_pCamera) delete g_pCamera;
+
+
+	if (g_pTexture0) g_pTexture0->Release();
+	if (g_pModel) delete g_pModel;
+	if (g_pText2D) delete g_pText2D;
 	
 }

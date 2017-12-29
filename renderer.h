@@ -6,8 +6,8 @@
 #include <DirectXPackedVector.h>
 #define _XM_NO_INTINSICS_
 #define XM_NO_ALIGNMENT
-//#include <xnamath.h>
-
+#include "model.h"
+#include "text2D.h"
 using namespace DirectX;
 
 class Renderer
@@ -23,22 +23,7 @@ class Renderer
 		
 		void CleanUp();
 		void ClearBackBuffer();
-		void SetLighting();
-		void SetVertexBuffer();
-		void SetWorldMatrix();
-		void SetLightWorldMatrix();
-		void SetConstantBuffer();
-		void SetWorldViewProjection();
-		void SetContext();
 		void Draw();
-
-		struct POS_COL_TEX_NORM_VERTEX
-		{
-			XMFLOAT3 Pos;
-			XMFLOAT4 Col;
-			XMFLOAT2 Tex;
-			XMFLOAT3 Normal;
-		};
 
 		ID3D11Device*					g_pD3DDevice = NULL;
 		ID3D11DeviceContext*			g_pImmediateContext = NULL;
@@ -48,17 +33,18 @@ class Renderer
 		ID3D11DepthStencilView*			g_pZBuffer;
 
 		//Models 
-		//...
+		Model*							g_pModel;
 		
 		//SceneNodes
 		//...
 
+		Text2D*							g_pText2D;
 		//ID3D11VertexShader *	g_pVShader;
 		//ID3D11PixelShader *		g_pPShader;
 		//ID3D11InputLayout *		g_pInputLayout;
 		//ID3D11Buffer *			g_pTransformationBuffer;
 		//ID3D11Buffer *			g_pLightBuffer;
-		//ID3D11ShaderResourceView* g_pTexture0;
+		ID3D11ShaderResourceView* g_pTexture0;
 		//ID3D11SamplerState*		g_pSampler0;
 
 		//DirectX::XMMATRIX projection, world, view;

@@ -29,14 +29,16 @@ VOut VShader(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
 	float diffuseAmount = dot(directional_light_vector, normal);
 	diffuseAmount = saturate(diffuseAmount);
 
-	output.color = ambient_light_color + (directional_light_color * diffuse_amount);
+	output.color = ambient_light_color + (directional_light_color * diffuseAmount);
+	
 
 	output.texcoord = texcoord;
+	
 
 	return output;
 }
 
 float4 PShader(float4 position : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD) : SV_TARGET
 {
-	return color * texture0.Sample(sampler0, texcoord);
+	return color*texture0.Sample(sampler0, texcoord);
 }
