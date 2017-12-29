@@ -8,6 +8,8 @@
 #define XM_NO_ALIGNMENT
 #include "model.h"
 #include "text2D.h"
+#include <chrono>
+#include <thread>
 using namespace DirectX;
 
 class Renderer
@@ -21,6 +23,7 @@ class Renderer
 		~Renderer();
 	private:
 		
+		void FrameLimit();
 		void CleanUp();
 		void ClearBackBuffer();
 		void Draw();
@@ -38,6 +41,8 @@ class Renderer
 		//SceneNodes
 		//...
 
+		chrono::system_clock::time_point startTime = chrono::system_clock::now();
+		chrono::system_clock::time_point endTime = chrono::system_clock::now();
 		Text2D*							g_pText2D;
 		//ID3D11VertexShader *	g_pVShader;
 		//ID3D11PixelShader *		g_pPShader;

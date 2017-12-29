@@ -48,7 +48,7 @@ void Renderer::ClearBackBuffer()
 
 void Renderer::Draw()
 {
-	g_pText2D->AddText("Time", -1.0f, 1.0f, 0.2f);
+
 	// Draw the vertex buffer to the back buffer //03-01
 	OutputDebugString("Draw");
 
@@ -64,17 +64,45 @@ void Renderer::Draw()
 
 	projection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0f), 800.0f / 600.0f, 1.0f, 100.0f);
 
-	//Draw Text
-	g_pText2D->RenderText();
-
 	//Draw Models
 	g_pModel->Draw(&world, &view, &projection);
 
 	//g_pImmediateContext->Draw(36, 0);
 }
 
+void Renderer::FrameLimit()
+{
+	/////////////////////////////////////////////////////////
+	//// The Following Code is from the user HolyBlackCat from the forum stackoverflow.com.
+	//// The post was published on the 2nd August, 2016
+	////////////////////////////////////////////////////////
+
+	//set startTime
+	startTime = chrono::system_clock::now();
+
+	chrono::duration<double, milli> frameDuration = startTime - endTime;
+
+	if (frameDuration.count() < 16.666)
+	{
+		std::chrono::duration<double, std::milli> delta_ms(16.666 - frameDuration.count());
+		auto delta_ms_duration = std::chrono::duration_cast<std::chrono::milliseconds>(delta_ms);
+		std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
+	}
+
+	endTime = chrono::system_clock::now();
+	chrono::duration<double, milli> sleepTime = endTime - startTime;
+
+	//show frames
+	//g_pText2D->AddText("Time", -1.0f, 1.0f, 0.2f);
+	g_pText2D->AddText("Frames: " + to_string(1000 / (frameDuration + sleepTime).count()), -1.0f, 1.0f, 0.05f);
+	g_pText2D->RenderText();
+}
+
 void Renderer::RenderFrame()
 {
+
+	
+	
 	ClearBackBuffer();
 	/*SetLighting();
 	SetVertexBuffer();
@@ -86,6 +114,7 @@ void Renderer::RenderFrame()
 	// Select which primitive type to use //03-01
 	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	FrameLimit();
 	Draw();
 
 	
