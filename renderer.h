@@ -8,6 +8,7 @@
 #define XM_NO_ALIGNMENT
 #include "model.h"
 #include "text2D.h"
+#include "scenenode.h"
 #include <chrono>
 #include <thread>
 using namespace DirectX;
@@ -39,7 +40,10 @@ class Renderer
 		Model*							g_pModel;
 		
 		//SceneNodes
-		//...
+		SceneNode*						g_pRootNode;
+		SceneNode*						g_pPlayer;
+		SceneNode*						g_pEnemy;
+		SceneNode*						g_pEnemy2;
 
 		chrono::system_clock::time_point startTime = chrono::system_clock::now();
 		chrono::system_clock::time_point endTime = chrono::system_clock::now();

@@ -23,6 +23,7 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	g_pModel = new Model(g_pD3DDevice, g_pImmediateContext);
 	g_pModel->LoadObjModel("assets/cube.obj");
 
+	//load textures from file
 	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/sword.png", NULL, NULL, &g_pTexture0, NULL)))
 	{
 		OutputDebugString("There was an error loading the texture file!");
@@ -33,7 +34,22 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	}
 	
 	//set up Scene Nodes
+	g_pRootNode = new SceneNode(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 
+	g_pPlayer = new SceneNode(-3.0, 0.0, 10.0, 0.0, 0.0, 0.0, 1.0);
+	g_pPlayer->SetModel(g_pModel);
+
+	g_pEnemy = new SceneNode(3.0, 0.0, 10.0, 0.0, 0.0, 0.0, 1.0);
+	g_pEnemy->SetModel(g_pModel);
+	g_pEnemy2 = new SceneNode(0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 1.0);
+	g_pEnemy2->SetModel(g_pModel);
+	
+
+	g_pRootNode->AddChildNode(g_pPlayer);
+	g_pRootNode->AddChildNode(g_pEnemy);
+	g_pRootNode->AddChildNode(g_pEnemy2);
+
+	//set Text with font from file
 	g_pText2D = new Text2D("assets/font1.bmp", g_pD3DDevice, g_pImmediateContext);
 	return S_OK;
 }
@@ -64,8 +80,11 @@ void Renderer::Draw()
 
 	projection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0f), 800.0f / 600.0f, 1.0f, 100.0f);
 
-	//Draw Models
-	g_pModel->Draw(&world, &view, &projection);
+	////Draw Models
+	//g_pModel->Draw(&world, &view, &projection);
+
+	//Execute RootNode
+	g_pRootNode->Execute(&XMMatrixIdentity(), &view, &projection);
 
 	//g_pImmediateContext->Draw(36, 0);
 }
@@ -81,19 +100,17 @@ void Renderer::FrameLimit()
 	startTime = chrono::system_clock::now();
 
 	chrono::duration<double, milli> frameDuration = startTime - endTime;
-
+	chrono::milliseconds sleepTime;
 	if (frameDuration.count() < 16.666)
 	{
 		std::chrono::duration<double, std::milli> delta_ms(16.666 - frameDuration.count());
-		auto delta_ms_duration = std::chrono::duration_cast<std::chrono::milliseconds>(delta_ms);
-		std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
+		sleepTime = std::chrono::duration_cast<std::chrono::milliseconds>(delta_ms);
+		std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime.count()));
 	}
 
 	endTime = chrono::system_clock::now();
-	chrono::duration<double, milli> sleepTime = endTime - startTime;
 
 	//show frames
-	//g_pText2D->AddText("Time", -1.0f, 1.0f, 0.2f);
 	g_pText2D->AddText("Frames: " + to_string(1000 / (frameDuration + sleepTime).count()), -1.0f, 1.0f, 0.05f);
 	g_pText2D->RenderText();
 }
@@ -140,6 +157,21 @@ void Renderer::CleanUp()
 
 	if (g_pTexture0) g_pTexture0->Release();
 	if (g_pModel) delete g_pModel;
-	if (g_pText2D) delete g_pText2D;
+
+	////detach child nodes from RootNode and delete child nodes
+	//if (g_pPlayer)
+	//{
+	//	g_pRootNode->DetatchNode(g_pPlayer);
+	//	delete g_pPlayer;
+	//}
+	//if (g_pEnemy)
+	//{
+	//	delete g_pEnemy;
+	//}
+
+	////delete RootNode
+	//if (g_pRootNode) delete g_pRootNode;
+
+	//if (g_pText2D) delete g_pText2D;
 	
 }

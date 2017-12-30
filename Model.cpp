@@ -7,9 +7,9 @@ Model::Model(ID3D11Device * device, ID3D11DeviceContext * deviceContext)
 
 	m_x = 0.0;
 	m_y = 0.0;
-	m_z = 5.0;
+	m_z = 0.0;
 	m_xangle = 0.0f;
-	m_yangle = 180.0f;
+	m_yangle = 0.0f;
 	m_zangle = 0.0f;
 	m_scale = 1.0f;
 
@@ -137,16 +137,16 @@ int Model::LoadObjModel(char * filename)
 
 void Model::Draw(XMMATRIX* World, XMMATRIX * view, XMMATRIX * projection)
 {
-	XMMATRIX world1;
+	/*XMMATRIX world1;
 	world1 = XMMatrixScaling(m_scale, m_scale, m_scale);
 	world1 *= XMMatrixRotationX(XMConvertToRadians(m_xangle));
 	world1 *= XMMatrixRotationY(XMConvertToRadians(m_yangle));
 	world1 *= XMMatrixRotationZ(XMConvertToRadians(m_zangle));
-	world1 *= XMMatrixTranslation(m_x, m_y, m_z);
+	world1 *= XMMatrixTranslation(m_x, m_y, m_z);*/
 
 	//Set Transformation Buffer Values
 	TransformationBuffer model_cbTransformation_values;
-	model_cbTransformation_values.WorldViewProjection = (world1)*(*view)*(*projection);
+	model_cbTransformation_values.WorldViewProjection = (*World)*(*view)*(*projection);
 
 	// Set transformation buffer to active
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pTransformationBuffer);
