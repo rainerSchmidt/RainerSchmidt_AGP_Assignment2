@@ -194,10 +194,12 @@ void Init::ShutdownD3D()
 {
 	//Release any resources and references
 
+	if (g_pZBuffer) g_pZBuffer->Release();
 	if (g_pSwapChain) g_pSwapChain->Release();
 	if (g_pImmediateContext) g_pImmediateContext->Release();
 	if (g_pD3DDevice) g_pD3DDevice->Release();
 	if (g_pBackBufferRTView) g_pBackBufferRTView->Release();
+	
 }
 
 Init::~Init()
@@ -212,3 +214,4 @@ ID3D11DeviceContext* Init::GetDeviceContext() { return g_pImmediateContext; }
 ID3D11RenderTargetView* Init::GetBackBuffer() { return g_pBackBufferRTView; }
 ID3D11DepthStencilView* Init::GetZBuffer() { return g_pZBuffer; }
 IDXGISwapChain* Init::GetSwapChain() { return g_pSwapChain; }
+HWND* Init::GetHWindow() { return &g_hWnd; }

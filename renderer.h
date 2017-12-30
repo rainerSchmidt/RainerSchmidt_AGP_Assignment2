@@ -9,6 +9,7 @@
 #include "model.h"
 #include "text2D.h"
 #include "scenenode.h"
+#include "input.h"
 #include <chrono>
 #include <thread>
 using namespace DirectX;
@@ -17,7 +18,7 @@ class Renderer
 {
 	public:
 		Renderer(ID3D11Device* D3DDevice, ID3D11DeviceContext* DeviceContext, IDXGISwapChain* SwapChain, ID3D11RenderTargetView* BackBuffer,
-					ID3D11DepthStencilView* ZBuffer);
+					ID3D11DepthStencilView* ZBuffer, Input* Input);
 
 		HRESULT InitialiseGraphicsElements();
 		void RenderFrame();
@@ -35,6 +36,7 @@ class Renderer
 
 		ID3D11RenderTargetView*			g_pBackBufferRTView = NULL;
 		ID3D11DepthStencilView*			g_pZBuffer;
+		Input*							g_pInput;
 
 		//Models 
 		Model*							g_pModel;

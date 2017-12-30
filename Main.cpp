@@ -9,6 +9,7 @@
 
 #include "init.h";
 #include "renderer.h";
+#include "input.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -37,13 +38,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
+	HWND* hwnd = init->GetHWindow();
+
+	//create and initialise Input
+	Input* input = new Input();
+	if (FAILED(input->InitialiseInput(&hInstance, hwnd)))
+	{
+		DXTRACE_MSG("Failed to initialise input");
+		return 0;
+	}
+
 	//initialise graphics elements
-	Renderer* renderer = new Renderer(init->GetDevice(), init->GetDeviceContext(), init->GetSwapChain(), init->GetBackBuffer(), init->GetZBuffer());
+	Renderer* renderer = new Renderer(init->GetDevice(), init->GetDeviceContext(), init->GetSwapChain(), init->GetBackBuffer(), init->GetZBuffer(),
+										input);
 	if (FAILED(renderer->InitialiseGraphicsElements()))
 	{
 		DXTRACE_MSG("Failed to initialise graphics");
-		//	return 0;
+		return 0;
 	}
+
+	
+
 
 	// Main message loop
 	MSG msg = { 0 };
@@ -57,7 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 		else
 		{
-			// do something
+			// call RenderFrame
 			renderer->RenderFrame();
 		}
 	}
@@ -65,6 +80,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//clean up d3d objects
 	delete renderer;
 	delete init;
+	delete input;
 
 	return (int)msg.wParam;
 }

@@ -1,13 +1,14 @@
 #include "renderer.h"
 
 Renderer::Renderer(ID3D11Device* D3DDevice, ID3D11DeviceContext* DeviceContext, IDXGISwapChain* SwapChain, ID3D11RenderTargetView* BackBuffer,
-					ID3D11DepthStencilView* ZBuffer)
+					ID3D11DepthStencilView* ZBuffer, Input* Input)
 {
 	g_pD3DDevice = D3DDevice;
 	g_pImmediateContext = DeviceContext;
 	g_pSwapChain = SwapChain;
 	g_pBackBufferRTView = BackBuffer;
 	g_pZBuffer = ZBuffer;
+	g_pInput = Input;
 	
 }
 

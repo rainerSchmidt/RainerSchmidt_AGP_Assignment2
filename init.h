@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <d3d11.h>
-#include <d3dx11.h>
+//#include <d3dx11.h>
 #include <dxerr.h>
 #include <stdio.h>
 #define _XM_NO_INTINSICS_
@@ -21,6 +21,7 @@ class Init
 		Init();
 		~Init();
 		void ShutdownD3D();
+		
 
 		//Getter
 		ID3D11Device*				GetDevice();
@@ -28,6 +29,7 @@ class Init
 		ID3D11RenderTargetView*		GetBackBuffer();
 		ID3D11DepthStencilView*		GetZBuffer();
 		IDXGISwapChain*				GetSwapChain();
+		HWND*						GetHWindow();
 
 
 
