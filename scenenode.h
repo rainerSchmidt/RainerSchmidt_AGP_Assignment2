@@ -26,6 +26,7 @@ public:
 
 	void LookAt_XZ(float X, float Z);
 	bool MoveForwards(float Distance, SceneNode* RootNode);
+	bool Strafe(float Distance, SceneNode* RootNode);
 	bool CheckCollision(SceneNode* CompareTree);
 	bool CheckCollision(SceneNode* CompareTree, SceneNode* ObjectTreeRoot);
 	void UpdateCollisionTree(XMMATRIX* World, float Scale);

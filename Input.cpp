@@ -106,25 +106,24 @@ void Input::KeyLogic(Camera* Cam, SceneNode* Node, SceneNode* RootNode)
 
 	if (IsKeyPressed(DIK_W))
 	{
-		OutputDebugString("W Key is pressed\n");
-		Cam->Forward(2.0f);
-		//Node->MoveForwards(2.0f, RootNode);
+		if (!Node->MoveForwards(0.5f, RootNode))
+			Cam->Forward(0.5f);
 	}
 		
 	if (IsKeyPressed(DIK_S))
 	{
-		Cam->Forward(-2.0f);
-		//Node->MoveForwards(-2.0f, RootNode);
+		if (!Node->MoveForwards(-0.5f, RootNode))
+			Cam->Forward(-0.5f);
 	}
 	if (IsKeyPressed(DIK_A))
 	{
-		Cam->Strafe(-2.0f);
-		//Node->Strafe(-2.0f, RootNode);
+		if (!Node->Strafe(-0.5f, RootNode))
+			Cam->Strafe(-0.5f);
 	}
 	if (IsKeyPressed(DIK_D))
 	{
-		Cam->Strafe(2.0f);
-		//Node->Strafe(2.0f, RootNode);
+		if (!Node->Strafe(0.5f, RootNode))
+			Cam->Strafe(0.5f);
 	}
 	if (IsKeyPressed(DIK_SPACE))
 	{ //make the camera/player jump
