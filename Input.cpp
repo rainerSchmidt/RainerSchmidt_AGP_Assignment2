@@ -126,13 +126,26 @@ void Input::KeyLogic(Camera* Cam, SceneNode* Node, SceneNode* RootNode)
 			Cam->Strafe(0.5f);
 	}
 	if (IsKeyPressed(DIK_SPACE))
-	{ //make the camera/player jump
+	{ 
+		if (!pressed)
+		{
+			pressed = true;
+			Cam->AddVelocityY(0.75f);
+			if (!Node->MoveUp(Cam->GetVelocityY(), RootNode))
+				Cam->MoveUp();
+		}
+
+		/*Cam->AddVelocityY(0.12f);
+		if (!Node->MoveUp(Cam->GetVelocityY(), RootNode))
+			Cam->MoveUp();*/
 	}
 }
 
 void Input::MouseLogic(Camera* Cam, SceneNode* Node)
 {
-	Cam->Rotate(g_mouse_state.lX);
-	//Node->Rotae(g_mouse_state.lX);
+	Cam->Rotate(g_mouse_state.lX* 0.5f);
+	Node->Rotate(g_mouse_state.lX*0.5f);
 }
+
+void Input::SetPressed(bool Status) { pressed = Status; }
 

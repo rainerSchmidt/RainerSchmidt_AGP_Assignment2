@@ -123,7 +123,7 @@ void Renderer::RenderFrame()
 {
 
 	
-	
+	Gravity();
 	ClearBackBuffer();
 	/*SetLighting();
 	SetVertexBuffer();
@@ -144,6 +144,34 @@ void Renderer::RenderFrame()
 
 	//render all the stuff
 	g_pSwapChain->Present(0, 0);
+}
+
+void Renderer::Gravity()
+{
+	//apply gravity to vertical velocity
+		g_pCamera->AddVelocityY(g_gravity);
+
+	//only call MoveUp function when velocity is not zero
+	if (g_pCamera->GetVelocityY() != 0.0f)
+	{
+		if (!g_pPlayer->MoveUp(g_pCamera->GetVelocityY(), g_pRootNode))
+			g_pCamera->MoveUp();
+	}
+		
+
+	//if player is on the ground set vertical velocity to zero
+	if (g_pPlayer->GetY() <= 0.0f)
+	{
+		g_pInput->SetPressed(false);
+ 		g_pCamera->SetVelocityY(0.0f);
+
+		g_pPlayer->SetPosY(0.0f);
+		g_pCamera->SetY(0.0f);
+
+	}
+		
+
+	
 }
 
 void Renderer::CleanUp()

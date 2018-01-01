@@ -31,6 +31,7 @@ class Renderer
 		void ClearBackBuffer();
 		void Draw();
 		void KeyLogic();
+		void Gravity();
 
 		ID3D11Device*					g_pD3DDevice = NULL;
 		ID3D11DeviceContext*			g_pImmediateContext = NULL;
@@ -64,6 +65,9 @@ class Renderer
 
 		//DirectX::XMMATRIX projection, world, view;
 		//TransformationBuffer g_transBufferValues;
+
+		//Gravity variables
+		float g_gravity = -0.05f;
 };
 
 

@@ -30,9 +30,9 @@ void Camera::Forward(float Distance)
 	m_z += m_dz * Distance;
 }
 
-void Camera::Up()
+void Camera::MoveUp()
 {
-
+	m_y += m_velocityY;
 }
 
 void Camera::Strafe(float Distance)
@@ -40,6 +40,21 @@ void Camera::Strafe(float Distance)
 	XMVECTOR right = XMVector3Cross((m_position - m_lookat), (m_up - m_position));
 	m_x += right.m128_f32[0] * Distance;
 	m_z += right.m128_f32[2] * Distance;
+}
+
+void Camera::AddVelocityY(float Value)
+{
+	m_velocityY += Value;
+}
+
+void Camera::SetVelocityY(float Value)
+{
+	m_velocityY = Value;
+}
+
+void Camera::SetY(float Value)
+{
+	m_y = Value;
 }
 
 //__________________________________________________GETTER
@@ -54,6 +69,7 @@ XMMATRIX Camera::GetViewMatrix()
 	return view;
 }
 
+float Camera::GetVelocityY() { return m_velocityY; }
 float Camera::GetX() { return m_x; }
 float Camera::GetY() { return m_y; }
 float Camera::GetZ() { return m_z; }

@@ -25,7 +25,9 @@ public:
 	~SceneNode();
 
 	void LookAt_XZ(float X, float Z);
+	void Rotate(float Amount);
 	bool MoveForwards(float Distance, SceneNode* RootNode);
+	bool MoveUp(float Distance, SceneNode* RootNode);
 	bool Strafe(float Distance, SceneNode* RootNode);
 	bool CheckCollision(SceneNode* CompareTree);
 	bool CheckCollision(SceneNode* CompareTree, SceneNode* ObjectTreeRoot);

@@ -19,10 +19,13 @@ private:
 	bool IsKeyPressed(unsigned char Keycode);
 	void ReadInputStates();
 
+	bool pressed = false;
+
 public:
 	Input(HINSTANCE* HInst, HWND* HWnd);
 	~Input();
 	HRESULT InitialiseInput();
 	void KeyLogic(Camera* Cam, SceneNode* Node, SceneNode* RootNode);
 	void MouseLogic(Camera* Cam, SceneNode* Node);
+	void SetPressed(bool status);
 };

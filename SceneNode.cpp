@@ -93,6 +93,28 @@ bool SceneNode::MoveForwards(float Distance, SceneNode* RootNode)
 	return false;
 }
 
+bool SceneNode::MoveUp(float Distance, SceneNode* RootNode)
+{
+	float old_y = m_y;
+	m_y += Distance;
+
+	XMMATRIX Identity = XMMatrixIdentity();
+
+	//since state has changed, need to update collision tree
+	//this basic system requires entire hierarchy to be updated
+	//so start at root_node passing in identity matrix
+	RootNode->UpdateCollisionTree(&Identity, 1.0);
+	if (CheckCollision(RootNode) == true)
+	{
+		// if collision restore state
+		m_y = old_y;
+
+		return true;
+	}
+
+	return false;
+}
+
 bool SceneNode::Strafe(float Distance, SceneNode* RootNode)
 {
 	float old_x = m_x;
@@ -122,6 +144,11 @@ bool SceneNode::Strafe(float Distance, SceneNode* RootNode)
 
 	return false;
 
+}
+
+void SceneNode::Rotate(float Amount)
+{
+	m_yangle += Amount;
 }
 
 bool SceneNode::CheckCollision(SceneNode* CompareTree)
@@ -235,3 +262,5 @@ XMVECTOR SceneNode::GetWorldCenterPosition()
 {
 	return XMVectorSet(m_world_centerX, m_world_centerY, m_world_centerZ,0.0);
 }
+
+float SceneNode::GetY() { return m_y; }
