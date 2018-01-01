@@ -1,8 +1,9 @@
 #include "input.h"
 
-Input::Input()
+Input::Input(HINSTANCE* HInst, HWND* HWnd)
 {
-
+	g_HInst = HInst;
+	g_HWnd = HWnd;
 }
 
 Input::~Input()
@@ -20,12 +21,12 @@ Input::~Input()
 	}
 }
 
-HRESULT Input::InitialiseInput(HINSTANCE* HInst, HWND* HWnd)
+HRESULT Input::InitialiseInput()
 {
 	HRESULT hr;
 
 	ZeroMemory(g_keyboard_keys_state, sizeof(g_keyboard_keys_state));
-	hr = DirectInput8Create(*HInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&g_direct_input, NULL);
+	hr = DirectInput8Create(*g_HInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&g_direct_input, NULL);
 	if (FAILED(hr))
 		return hr;
 
@@ -38,7 +39,7 @@ HRESULT Input::InitialiseInput(HINSTANCE* HInst, HWND* HWnd)
 	if (FAILED(hr))
 		return hr;
 
-	hr = g_keyboard_device->SetCooperativeLevel(*HWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	hr = g_keyboard_device->SetCooperativeLevel(*g_HWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	if (FAILED(hr))
 		return hr;
 
@@ -55,7 +56,7 @@ HRESULT Input::InitialiseInput(HINSTANCE* HInst, HWND* HWnd)
 	if (FAILED(hr))
 		return hr;
 
-	hr = g_mouse_device->SetCooperativeLevel(*HWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	hr = g_mouse_device->SetCooperativeLevel(*g_HWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	if (FAILED(hr))
 		return hr;
 
@@ -80,6 +81,15 @@ void Input::ReadInputStates()
 			g_keyboard_device->Acquire();
 		}
 	}
+
+	hr = g_mouse_device->GetDeviceState(sizeof(g_mouse_state), (LPVOID)&g_mouse_state);
+	if (FAILED(hr))
+	{
+		if ((hr == DIERR_INPUTLOST) || (hr == DIERR_NOTACQUIRED))
+		{
+			g_mouse_device->Acquire();
+		}
+	}
 }
 
 bool Input::IsKeyPressed(unsigned char Keycode)
@@ -87,19 +97,43 @@ bool Input::IsKeyPressed(unsigned char Keycode)
 	return g_keyboard_keys_state[Keycode] & 0x80;
 }
 
-int Input::KeyLogic()
+void Input::KeyLogic(Camera* Cam, SceneNode* Node, SceneNode* RootNode)
 {
-	if (IsKeyPressed(DIK_ESCAPE))
-		return 0;
-	if (IsKeyPressed(DIK_W))
-		return 1;
-	if (IsKeyPressed(DIK_S))
-		return 2;
-	if (IsKeyPressed(DIK_A))
-		return 3;
-	if (IsKeyPressed(DIK_D))
-		return 4;
-	if (IsKeyPressed(DIK_SPACE))
-		return 5;
+	ReadInputStates();
 
+	if (IsKeyPressed(DIK_ESCAPE))
+		DestroyWindow(*g_HWnd);
+
+	if (IsKeyPressed(DIK_W))
+	{
+		OutputDebugString("W Key is pressed\n");
+		Cam->Forward(2.0f);
+		//Node->MoveForwards(2.0f, RootNode);
+	}
+		
+	if (IsKeyPressed(DIK_S))
+	{
+		Cam->Forward(-2.0f);
+		//Node->MoveForwards(-2.0f, RootNode);
+	}
+	if (IsKeyPressed(DIK_A))
+	{
+		Cam->Strafe(-2.0f);
+		//Node->Strafe(-2.0f, RootNode);
+	}
+	if (IsKeyPressed(DIK_D))
+	{
+		Cam->Strafe(2.0f);
+		//Node->Strafe(2.0f, RootNode);
+	}
+	if (IsKeyPressed(DIK_SPACE))
+	{ //make the camera/player jump
+	}
 }
+
+void Input::MouseLogic(Camera* Cam, SceneNode* Node)
+{
+	Cam->Rotate(g_mouse_state.lX);
+	//Node->Rotae(g_mouse_state.lX);
+}
+

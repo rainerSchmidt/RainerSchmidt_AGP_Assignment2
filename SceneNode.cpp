@@ -78,7 +78,7 @@ bool SceneNode::MoveForwards(float Distance, SceneNode* RootNode)
 	XMMATRIX Identity = XMMatrixIdentity();
 
 	//since state has changed, need to update collision tree
-	//this vasic system requires entire hierarchy to be updated
+	//this basic system requires entire hierarchy to be updated
 	//so start at root_node passing in identity matrix
 	RootNode->UpdateCollisionTree(&Identity, 1.0);
 	if (CheckCollision(RootNode) == true)

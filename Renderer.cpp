@@ -9,6 +9,7 @@ Renderer::Renderer(ID3D11Device* D3DDevice, ID3D11DeviceContext* DeviceContext, 
 	g_pBackBufferRTView = BackBuffer;
 	g_pZBuffer = ZBuffer;
 	g_pInput = Input;
+	g_pCamera = new Camera(0.0, 0.0, 0.0, 0.0);
 	
 }
 
@@ -37,7 +38,7 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	//set up Scene Nodes
 	g_pRootNode = new SceneNode(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 
-	g_pPlayer = new SceneNode(-3.0, 0.0, 10.0, 0.0, 0.0, 0.0, 1.0);
+	g_pPlayer = new SceneNode(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 	g_pPlayer->SetModel(g_pModel);
 
 	g_pEnemy = new SceneNode(3.0, 0.0, 10.0, 0.0, 0.0, 0.0, 1.0);
@@ -69,15 +70,17 @@ void Renderer::Draw()
 	// Draw the vertex buffer to the back buffer //03-01
 	OutputDebugString("Draw");
 
-	XMMATRIX world, view, projection;
+	/*XMMATRIX world, view, projection;*/
+	XMMATRIX view, projection;
 
-	world = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	/*world = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 	world *= XMMatrixRotationX(XMConvertToRadians(0.0f));
 	world *= XMMatrixRotationY(XMConvertToRadians(0.0f));
 	world *= XMMatrixRotationZ(XMConvertToRadians(0.0f));
-	world *= XMMatrixTranslation(0.0f, 0.0f, 15.0f);
+	world *= XMMatrixTranslation(0.0f, 0.0f, 15.0f);*/
 
 	view = XMMatrixIdentity();
+	view = g_pCamera->GetViewMatrix();
 
 	projection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0f), 800.0f / 600.0f, 1.0f, 100.0f);
 
@@ -132,7 +135,8 @@ void Renderer::RenderFrame()
 	// Select which primitive type to use //03-01
 	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	//g_pInput->KeyLogic(g_pCamera);
+	g_pInput->KeyLogic(g_pCamera, g_pPlayer, g_pRootNode);
+	g_pInput->MouseLogic(g_pCamera, g_pPlayer);
 	FrameLimit();
 	Draw();
 
@@ -154,7 +158,7 @@ void Renderer::CleanUp()
 	if (g_pBackBufferRTView) g_pBackBufferRTView->Release();
 	if (g_pTransformationBuffer) g_pTransformationBuffer->Release();
 	if (g_pLightBuffer) g_pLightBuffer->Release();*/
-	//if(g_pCamera) delete g_pCamera;
+	if(g_pCamera) delete g_pCamera;
 
 
 	if (g_pTexture0) g_pTexture0->Release();

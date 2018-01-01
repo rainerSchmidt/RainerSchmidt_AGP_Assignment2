@@ -1,5 +1,7 @@
 #pragma once
 #include <dinput.h>
+#include "camera.h"
+#include "scenenode.h"
 
 class Input
 {
@@ -11,13 +13,16 @@ private:
 	DIMOUSESTATE			g_mouse_state;
 	unsigned char			g_keyboard_keys_state[256];
 
+	HINSTANCE*				g_HInst;
+	HWND*					g_HWnd;
+
 	bool IsKeyPressed(unsigned char Keycode);
 	void ReadInputStates();
 
 public:
-	Input();
+	Input(HINSTANCE* HInst, HWND* HWnd);
 	~Input();
-	HRESULT InitialiseInput(HINSTANCE* HInst, HWND* HWnd);
-	//int KeyLogic(Camera* Cam);
-	int KeyLogic();
+	HRESULT InitialiseInput();
+	void KeyLogic(Camera* Cam, SceneNode* Node, SceneNode* RootNode);
+	void MouseLogic(Camera* Cam, SceneNode* Node);
 };

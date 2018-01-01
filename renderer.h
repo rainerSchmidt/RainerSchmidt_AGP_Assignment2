@@ -10,6 +10,7 @@
 #include "text2D.h"
 #include "scenenode.h"
 #include "input.h"
+#include "camera.h"
 #include <chrono>
 #include <thread>
 using namespace DirectX;
@@ -39,7 +40,7 @@ class Renderer
 		ID3D11RenderTargetView*			g_pBackBufferRTView = NULL;
 		ID3D11DepthStencilView*			g_pZBuffer;
 		Input*							g_pInput;
-		//Camera*						g_pCamera;
+		Camera*							g_pCamera;
 
 		//Models 
 		Model*							g_pModel;

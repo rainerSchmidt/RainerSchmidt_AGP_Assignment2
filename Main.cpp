@@ -41,8 +41,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	HWND* hwnd = init->GetHWindow();
 
 	//create and initialise Input
-	Input* input = new Input();
-	if (FAILED(input->InitialiseInput(&hInstance, hwnd)))
+	Input* input = new Input(&hInstance, hwnd);
+	if (FAILED(input->InitialiseInput()))
 	{
 		DXTRACE_MSG("Failed to initialise input");
 		return 0;
