@@ -29,14 +29,17 @@ class Renderer
 		void CleanUp();
 		void ClearBackBuffer();
 		void Draw();
+		void KeyLogic();
 
 		ID3D11Device*					g_pD3DDevice = NULL;
 		ID3D11DeviceContext*			g_pImmediateContext = NULL;
+		//HWND*							g_pHWnd = NULL;
 		IDXGISwapChain*					g_pSwapChain = NULL;
 
 		ID3D11RenderTargetView*			g_pBackBufferRTView = NULL;
 		ID3D11DepthStencilView*			g_pZBuffer;
 		Input*							g_pInput;
+		//Camera*						g_pCamera;
 
 		//Models 
 		Model*							g_pModel;

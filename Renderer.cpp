@@ -132,6 +132,7 @@ void Renderer::RenderFrame()
 	// Select which primitive type to use //03-01
 	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	//g_pInput->KeyLogic(g_pCamera);
 	FrameLimit();
 	Draw();
 

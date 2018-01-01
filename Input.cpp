@@ -12,6 +12,12 @@ Input::~Input()
 		g_keyboard_device->Unacquire();
 		g_keyboard_device->Release();
 	}
+
+	if (g_mouse_device)
+	{
+		g_mouse_device->Unacquire();
+		g_mouse_device->Release();
+	}
 }
 
 HRESULT Input::InitialiseInput(HINSTANCE* HInst, HWND* HWnd)
@@ -23,6 +29,7 @@ HRESULT Input::InitialiseInput(HINSTANCE* HInst, HWND* HWnd)
 	if (FAILED(hr))
 		return hr;
 
+	// create, initialise and set keyboard device
 	hr = g_direct_input->CreateDevice(GUID_SysKeyboard, &g_keyboard_device, NULL);
 	if (FAILED(hr))
 		return hr;
@@ -38,6 +45,25 @@ HRESULT Input::InitialiseInput(HINSTANCE* HInst, HWND* HWnd)
 	hr = g_keyboard_device->Acquire();
 	if (FAILED(hr))
 		return hr;
+
+	// create, initialise and set mouse device
+	hr = g_direct_input->CreateDevice(GUID_SysMouse, &g_mouse_device, NULL);
+	if (FAILED(hr))
+		return hr;
+
+	hr = g_mouse_device->SetDataFormat(&c_dfDIMouse);
+	if (FAILED(hr))
+		return hr;
+
+	hr = g_mouse_device->SetCooperativeLevel(*HWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	if (FAILED(hr))
+		return hr;
+
+	hr = g_mouse_device->Acquire();
+	if (FAILED(hr))
+		return hr;
+
+
 
 	return S_OK;
 }
@@ -59,4 +85,21 @@ void Input::ReadInputStates()
 bool Input::IsKeyPressed(unsigned char Keycode)
 {
 	return g_keyboard_keys_state[Keycode] & 0x80;
+}
+
+int Input::KeyLogic()
+{
+	if (IsKeyPressed(DIK_ESCAPE))
+		return 0;
+	if (IsKeyPressed(DIK_W))
+		return 1;
+	if (IsKeyPressed(DIK_S))
+		return 2;
+	if (IsKeyPressed(DIK_A))
+		return 3;
+	if (IsKeyPressed(DIK_D))
+		return 4;
+	if (IsKeyPressed(DIK_SPACE))
+		return 5;
+
 }
