@@ -106,73 +106,37 @@ void Input::KeyLogic(Camera* Cam,SceneNode* RootNode, SceneNode* Node, SceneNode
 
 	if (IsKeyPressed(DIK_W))
 	{
-		/*if (!Node->MoveForwards(0.5f, RootNode))
-			Cam->Forward(0.5f);*/
-		
-		if (!Enemies->CheckCollisionRay(Node,
-			0.0f, 0.0f, 0.2f))
-		{
-			Node->MoveForwards(g_MoveSpeed, RootNode, false);
+		if (!Node->MoveForwards(g_MoveSpeed, RootNode, Enemies, true))
 			Cam->Forward(g_MoveSpeed);
-		}
 	}
 		
 	if (IsKeyPressed(DIK_S))
 	{
-		/*if (!Node->MoveForwards(-0.5f, RootNode))
-			Cam->Forward(-0.5f);*/
-
-		if (!Enemies->CheckCollisionRay(Node,
-			0.0f, 0.0f, -0.2f))
-		{
-			Node->MoveForwards(-g_MoveSpeed, RootNode, false);
+		if (!Node->MoveForwards(-g_MoveSpeed, RootNode, Enemies, true))
 			Cam->Forward(-g_MoveSpeed);
-		}
 	}
 	if (IsKeyPressed(DIK_A))
 	{
-		/*if (!Node->Strafe(-0.5f, RootNode))
-			Cam->Strafe(-0.5f);*/
-
-		if (!Enemies->CheckCollisionRay(Node,
-			-g_MoveSpeed * -0.2f, 0.0f, 0.0f))
-		{
-			Node->Strafe(-g_MoveSpeed, RootNode, false);
+		if (!Node->Strafe(-g_MoveSpeed, RootNode, Enemies, true))
 			Cam->Strafe(-g_MoveSpeed);
-		}
 	}
 	if (IsKeyPressed(DIK_D))
 	{
-		/*if (!Node->Strafe(0.5f, RootNode))
-			Cam->Strafe(0.5f);*/
-
-		if (!Enemies->CheckCollisionRay(Node,
-			g_MoveSpeed * 0.2f, 0.0f, 0.0f))
-		{
-			Node->Strafe(g_MoveSpeed, RootNode, false);
+		if (!Node->Strafe(g_MoveSpeed, RootNode, Enemies, true))
 			Cam->Strafe(g_MoveSpeed);
-		}
 	}
 	if (IsKeyPressed(DIK_SPACE))
 	{ 
 		if (!pressed)
 		{
 			pressed = true;
-			/*Cam->AddVelocityY(0.75f);
-			if (!Node->MoveUp(Cam->GetVelocityY(), RootNode))
-				Cam->MoveUp();*/
-
-			if (!Enemies->CheckCollisionRay(Node,
-										0.0f, Cam->GetVelocityY(), 0.0f))
-			{
-				Node->MoveUp(Cam->GetVelocityY(), RootNode, false);
+			Cam->AddVelocityY(0.75f);
+			if (!Node->MoveUp(Cam->GetVelocityY(), RootNode, Enemies, true))
 				Cam->MoveUp();
-			}
-		}
 
-		/*Cam->AddVelocityY(0.12f);
-		if (!Node->MoveUp(Cam->GetVelocityY(), RootNode))
-			Cam->MoveUp();*/
+			XMMATRIX identity = XMMatrixIdentity();
+			RootNode->UpdateCollisionTree(&identity, 1.0f);
+		}
 	}
 }
 

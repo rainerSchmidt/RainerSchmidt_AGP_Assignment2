@@ -28,9 +28,9 @@ public:
 
 	void LookAt_XZ(float X, float Z);
 	void Rotate(float Amount, SceneNode* RootNode);
-	bool MoveForwards(float Distance, SceneNode* RootNode, bool CollisionCheck);
-	bool MoveUp(float Distance, SceneNode* RootNode, bool CollisionCheck);
-	bool Strafe(float Distance, SceneNode* RootNode, bool CollisionCheck);
+	bool MoveForwards(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, bool CollisionCheck);
+	bool MoveUp(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, bool CollisionCheck);
+	bool Strafe(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, bool CollisionCheck);
 	bool CheckCollision(SceneNode* CompareTree);
 	bool CheckCollision(SceneNode* CompareTree, SceneNode* ObjectTreeRoot);
 	void UpdateCollisionTree(XMMATRIX* World, float Scale);
