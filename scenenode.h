@@ -18,12 +18,12 @@ private:
 
 	float m_x, m_y, m_z;
 	float m_xangle, m_zangle, m_yangle;
-	float m_scale;
+	float m_scaleX, m_scaleY, m_scaleZ;
 	float m_world_centerX, m_world_centerY, m_world_centerZ;
 	float m_world_scale;
 
 public:
-	SceneNode(float X, float Y, float Z, float RotX, float RotY, float RotZ, float Scale);
+	SceneNode(float X, float Y, float Z, float RotX, float RotY, float RotZ, float ScaleX, float ScaleY, float ScaleZ);
 	~SceneNode();
 
 	void LookAt_XZ(float X, float Z);
@@ -42,7 +42,9 @@ public:
 	float GetRotX();
 	float GetRotY();
 	float GetRotZ();
-	float GetScale();
+	float GetScaleX();
+	float GetScaleY();
+	float GetScaleZ();
 	Model* GetModel();
 	XMVECTOR GetWorldCenterPosition();
 

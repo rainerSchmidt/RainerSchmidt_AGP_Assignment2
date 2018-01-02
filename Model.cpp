@@ -158,10 +158,12 @@ void Model::Draw(XMMATRIX* World, XMMATRIX * view, XMMATRIX * projection)
 	//Set Light Buffer Values
 	m_DirectionalLightShinesFrom = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
 	m_DirectionalLightColor = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
-	m_AmbientLightColor = XMVectorSet(1.0f, 0.1f, 0.1f, 1.0f);
+	m_AmbientLightColor = XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f);
 
 	LightBuffer model_cbLight_values;
 	XMMATRIX transpose;
+
+	transpose = XMMatrixTranspose(*World);
 
 	model_cbLight_values.directional_light_color = m_DirectionalLightColor;
 	model_cbLight_values.ambient_light_color = m_AmbientLightColor;

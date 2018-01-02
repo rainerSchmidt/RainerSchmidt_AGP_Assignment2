@@ -1,6 +1,6 @@
 #include "scenenode.h"
 
-SceneNode::SceneNode(float X, float Y, float Z, float RotX, float RotY, float RotZ, float Scale)
+SceneNode::SceneNode(float X, float Y, float Z, float RotX, float RotY, float RotZ, float ScaleX, float ScaleY, float ScaleZ)
 {
 	m_pModel = NULL;
 
@@ -10,7 +10,9 @@ SceneNode::SceneNode(float X, float Y, float Z, float RotX, float RotY, float Ro
 	m_xangle = RotX;
 	m_yangle = RotY;
 	m_zangle = RotZ;
-	m_scale = Scale;
+	m_scaleX = ScaleX;
+	m_scaleY = ScaleY;
+	m_scaleZ = ScaleZ;
 }
 
 void SceneNode::AddChildNode(SceneNode* Node)
@@ -39,7 +41,7 @@ void SceneNode::Execute(XMMATRIX* World, XMMATRIX* View, XMMATRIX* Projection)
 	//the local_world_matrix will be used to calc the local transformations fir this node
 	XMMATRIX local_world = XMMatrixIdentity();
 
-	local_world = XMMatrixScaling(m_scale, m_scale, m_scale);
+	local_world = XMMatrixScaling(m_scaleX, m_scaleY, m_scaleZ);
 	local_world *= XMMatrixRotationX(XMConvertToRadians(m_xangle));
 	local_world *= XMMatrixRotationY(XMConvertToRadians(m_yangle));
 	local_world *= XMMatrixRotationZ(XMConvertToRadians(m_zangle));
@@ -226,14 +228,15 @@ void SceneNode::UpdateCollisionTree(XMMATRIX* World, float Scale)
 
 	m_local_world_matrix = XMMatrixIdentity();
 
-	m_local_world_matrix = XMMatrixScaling(m_scale, m_scale, m_scale);
+	m_local_world_matrix = XMMatrixScaling(m_scaleX, m_scaleY, m_scaleZ);
 	m_local_world_matrix *= XMMatrixRotationX(XMConvertToRadians(m_xangle));
 	m_local_world_matrix *= XMMatrixRotationY(XMConvertToRadians(m_yangle));
 	m_local_world_matrix *= XMMatrixRotationZ(XMConvertToRadians(m_zangle));
 	m_local_world_matrix *= XMMatrixTranslation(m_x, m_y, m_z);
 	
 	m_local_world_matrix *= *World;
-	m_world_scale = Scale * m_scale;
+	m_world_scale = Scale;
+	//m_world_scale = Scale * m_scale;
 
 	XMVECTOR v;
 	if (m_pModel)

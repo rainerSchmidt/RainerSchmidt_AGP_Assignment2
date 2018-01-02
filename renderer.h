@@ -44,14 +44,17 @@ class Renderer
 		Camera*							g_pCamera;
 
 		//Models 
-		Model*							g_pModel;
+		Model*							g_pModelPlane;
+		Model*							g_pModelCube;
+		Model*							g_pModelSphere;
 		
 		//SceneNodes
 		SceneNode*						g_pRootNode;
 		SceneNode*						g_pEnemiesNode;
-		SceneNode*						g_pPlayer;
 		SceneNode*						g_pEnemy;
 		SceneNode*						g_pEnemy2;
+		SceneNode*						g_pPlayer;
+		SceneNode*						g_pGround;
 
 		chrono::system_clock::time_point startTime = chrono::system_clock::now();
 		chrono::system_clock::time_point endTime = chrono::system_clock::now();
@@ -61,7 +64,9 @@ class Renderer
 		//ID3D11InputLayout *		g_pInputLayout;
 		//ID3D11Buffer *			g_pTransformationBuffer;
 		//ID3D11Buffer *			g_pLightBuffer;
-		ID3D11ShaderResourceView* g_pTexture0;
+		ID3D11ShaderResourceView* g_pTextureGrass;
+		ID3D11ShaderResourceView* g_pTextureWall;
+		ID3D11ShaderResourceView* g_pTextureTile;
 		//ID3D11SamplerState*		g_pSampler0;
 
 		//DirectX::XMMATRIX projection, world, view;

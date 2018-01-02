@@ -3,6 +3,7 @@ struct VOut
 	float4 position : SV_POSITION;
 	float4 color : COLOR;
 	float2 texcoord : TEXCOORD;
+	float3 normal : NORMAL;
 };
 
 Texture2D		texture0;
@@ -26,19 +27,25 @@ VOut VShader(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
 
 	output.position = mul(WVPMatrix, position);
 
-	float diffuseAmount = dot(directional_light_vector, normal);
+	/*float diffuseAmount = dot(directional_light_vector, normal);
 	diffuseAmount = saturate(diffuseAmount);
 
-	output.color = ambient_light_color + (directional_light_color * diffuseAmount);
+	output.color = ambient_light_color + (directional_light_color * diffuseAmount);*/
 	
+	output.color = ambient_light_color;
 
 	output.texcoord = texcoord;
+
+	output.normal = normal;
 	
 
 	return output;
 }
 
-float4 PShader(float4 position : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD) : SV_TARGET
+float4 PShader(float4 position : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD, float3 normal : NORMAL) : SV_TARGET
 {
-	return color*texture0.Sample(sampler0, texcoord);
+	float diffuseAmount = dot(directional_light_vector, normal);
+	diffuseAmount = saturate(diffuseAmount);
+
+	return (color + (directional_light_color * diffuseAmount))*texture0.Sample(sampler0, texcoord);
 }

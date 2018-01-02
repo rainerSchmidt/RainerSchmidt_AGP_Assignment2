@@ -22,33 +22,50 @@ Renderer::~Renderer()
 HRESULT Renderer::InitialiseGraphicsElements()
 {
 	//initialise Models
-	g_pModel = new Model(g_pD3DDevice, g_pImmediateContext);
-	g_pModel->LoadObjModel("assets/cube.obj");
+	g_pModelPlane = new Model(g_pD3DDevice, g_pImmediateContext);
+	g_pModelPlane->LoadObjModel("assets/cube.obj");
 
-	//load textures from file
-	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/sword.png", NULL, NULL, &g_pTexture0, NULL)))
-	{
+	g_pModelCube = new Model(g_pD3DDevice, g_pImmediateContext);
+	g_pModelCube->LoadObjModel("assets/cube.obj");
+
+	g_pModelSphere = new Model(g_pD3DDevice, g_pImmediateContext);
+	g_pModelSphere->LoadObjModel("assets/Sphere.obj");
+
+	//load grass texture from file
+	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/grass.jpg", NULL, NULL, &g_pTextureGrass, NULL)))
 		OutputDebugString("There was an error loading the texture file!");
-	}
 	else
-	{
-		g_pModel->SetTexture(g_pTexture0);
-	}
+		g_pModelPlane->SetTexture(g_pTextureGrass);
+
+	//load wall texture from file
+	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/wall.jpg", NULL, NULL, &g_pTextureWall, NULL)))
+		OutputDebugString("There was an error loading the texture file!");
+	else
+		g_pModelCube->SetTexture(g_pTextureWall);
+
+	//load tile texture from file
+	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/tile.jpg", NULL, NULL, &g_pTextureTile, NULL)))
+		OutputDebugString("There was an error loading the texture file!");
+	else
+		g_pModelSphere->SetTexture(g_pTextureTile);
 	
 	//set up Scene Nodes
-	g_pRootNode = new SceneNode(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-	g_pEnemiesNode = new SceneNode(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+	g_pRootNode = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemiesNode = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pGround = new SceneNode(0.0f, -1.2f, 55.0f, 0.0f, 0.0f, 0.0f, 20.0f, 0.2f, 50.0f);
+	g_pGround->SetModel(g_pModelCube);
 
-	g_pPlayer = new SceneNode(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-	g_pPlayer->SetModel(g_pModel);
+	g_pPlayer = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pPlayer->SetModel(g_pModelSphere);
 
-	g_pEnemy = new SceneNode(3.0, 0.0, 10.0, 0.0, 0.0, 0.0, 1.0);
-	g_pEnemy->SetModel(g_pModel);
-	g_pEnemy2 = new SceneNode(0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 1.0);
-	g_pEnemy2->SetModel(g_pModel);
+	g_pEnemy = new SceneNode(3.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemy->SetModel(g_pModelCube);
+	g_pEnemy2 = new SceneNode(0.0f, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemy2->SetModel(g_pModelCube);
 	
 	g_pRootNode->AddChildNode(g_pEnemiesNode);
 	g_pRootNode->AddChildNode(g_pPlayer);
+	g_pRootNode->AddChildNode(g_pGround);
 
 	g_pEnemiesNode->AddChildNode(g_pEnemy);
 	g_pEnemiesNode->AddChildNode(g_pEnemy2);
@@ -150,45 +167,6 @@ void Renderer::RenderFrame()
 
 void Renderer::Gravity()
 {
-	////apply gravity to vertical velocity
-	//	g_pCamera->AddVelocityY(g_gravity);
-
-	////only call MoveUp function when velocity is not zero
-	//if (g_pCamera->GetVelocityY() != 0.0f)
-	//{
-	//	/*if (!g_pEnemiesNode->CheckCollisionRay(g_pPlayer,
-	//		0.0f, g_pCamera->GetVelocityY(), 0.0f))
-	//	{
-	//		g_pPlayer->MoveUp(g_pCamera->GetVelocityY(), g_pRootNode, false);
-	//		g_pCamera->MoveUp();
-	//	}*/
-	//		 
-	//	/*if (!g_pPlayer->MoveUp(g_pCamera->GetVelocityY(), g_pRootNode))
-	//		g_pCamera->MoveUp();*/
-
-	//	if (!g_pPlayer->MoveUp(g_pCamera->GetVelocityY(), g_pRootNode, g_pEnemiesNode, true))
-	//	{
-	//		g_pCamera->MoveUp();
-	//	}
-	//}
-	//	
-
-	////if player is on the ground set vertical velocity to zero
-	//if (g_pPlayer->GetY() <= 0.0f)
-	//{
-	//	g_pInput->SetPressed(false);
- //		g_pCamera->SetVelocityY(0.0f);
-
-	//	g_pPlayer->SetPosY(0.0f);
-	//	g_pCamera->SetY(0.0f);
-
-	//	XMMATRIX identity = XMMatrixIdentity();
-	//	g_pRootNode->UpdateCollisionTree(&identity, 1.0f);
-
-	//}
-		
-
-
 	//apply gravity to vertical velocity if player is over ground
 	if(g_pPlayer->GetY() > 0)
 		g_pCamera->AddVelocityY(g_gravity);
@@ -242,8 +220,12 @@ void Renderer::CleanUp()
 	if(g_pCamera) delete g_pCamera;
 
 
-	if (g_pTexture0) g_pTexture0->Release();
-	if (g_pModel) delete g_pModel;
+	if (g_pTextureGrass) g_pTextureGrass->Release();
+	if (g_pTextureTile) g_pTextureTile->Release();
+	if (g_pTextureWall) g_pTextureWall->Release();
+	if (g_pModelPlane) delete g_pModelPlane;
+	if (g_pModelCube) delete g_pModelCube;
+	if (g_pModelSphere) delete g_pModelSphere;
 
 	////detach child nodes from RootNode and delete child nodes
 	//if (g_pPlayer)
