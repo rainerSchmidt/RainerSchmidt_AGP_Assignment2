@@ -16,6 +16,8 @@ private:
 	HINSTANCE*				g_HInst;
 	HWND*					g_HWnd;
 
+	float					g_MoveSpeed = 0.1f;
+
 	bool IsKeyPressed(unsigned char Keycode);
 	void ReadInputStates();
 
@@ -25,7 +27,7 @@ public:
 	Input(HINSTANCE* HInst, HWND* HWnd);
 	~Input();
 	HRESULT InitialiseInput();
-	void KeyLogic(Camera* Cam, SceneNode* Node, SceneNode* RootNode);
-	void MouseLogic(Camera* Cam, SceneNode* Node);
+	void KeyLogic(Camera* Cam, SceneNode* RootNode, SceneNode* Node, SceneNode* Enemies);
+	void MouseLogic(Camera* Cam, SceneNode* Node, SceneNode* RootNode);
 	void SetPressed(bool status);
 };

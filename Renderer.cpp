@@ -37,6 +37,7 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	
 	//set up Scene Nodes
 	g_pRootNode = new SceneNode(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+	g_pEnemiesNode = new SceneNode(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 
 	g_pPlayer = new SceneNode(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 	g_pPlayer->SetModel(g_pModel);
@@ -46,10 +47,11 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	g_pEnemy2 = new SceneNode(0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 1.0);
 	g_pEnemy2->SetModel(g_pModel);
 	
-
+	g_pRootNode->AddChildNode(g_pEnemiesNode);
 	g_pRootNode->AddChildNode(g_pPlayer);
-	g_pRootNode->AddChildNode(g_pEnemy);
-	g_pRootNode->AddChildNode(g_pEnemy2);
+
+	g_pEnemiesNode->AddChildNode(g_pEnemy);
+	g_pEnemiesNode->AddChildNode(g_pEnemy2);
 
 	//set Text with font from file
 	g_pText2D = new Text2D("assets/font1.bmp", g_pD3DDevice, g_pImmediateContext);
@@ -82,7 +84,7 @@ void Renderer::Draw()
 	view = XMMatrixIdentity();
 	view = g_pCamera->GetViewMatrix();
 
-	projection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0f), 800.0f / 600.0f, 1.0f, 100.0f);
+	projection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0f), 800.0f / 600.0f, 0.01f, 100.0f);
 
 	////Draw Models
 	//g_pModel->Draw(&world, &view, &projection);
@@ -123,7 +125,7 @@ void Renderer::RenderFrame()
 {
 
 	
-	Gravity();
+	//Gravity();
 	ClearBackBuffer();
 	/*SetLighting();
 	SetVertexBuffer();
@@ -135,8 +137,8 @@ void Renderer::RenderFrame()
 	// Select which primitive type to use //03-01
 	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	g_pInput->KeyLogic(g_pCamera, g_pPlayer, g_pRootNode);
-	g_pInput->MouseLogic(g_pCamera, g_pPlayer);
+	g_pInput->KeyLogic(g_pCamera, g_pRootNode, g_pPlayer, g_pEnemiesNode);
+	g_pInput->MouseLogic(g_pCamera, g_pPlayer, g_pRootNode);
 	FrameLimit();
 	Draw();
 
@@ -154,8 +156,15 @@ void Renderer::Gravity()
 	//only call MoveUp function when velocity is not zero
 	if (g_pCamera->GetVelocityY() != 0.0f)
 	{
-		if (!g_pPlayer->MoveUp(g_pCamera->GetVelocityY(), g_pRootNode))
+		if (!g_pPlayer->CheckCollisionRay(g_pPlayer,
+			0.0f, g_pCamera->GetVelocityY(), 0.0f))
+		{
+			g_pPlayer->MoveUp(g_pCamera->GetVelocityY(), g_pRootNode, false);
 			g_pCamera->MoveUp();
+		}
+			 
+		/*if (!g_pPlayer->MoveUp(g_pCamera->GetVelocityY(), g_pRootNode))
+			g_pCamera->MoveUp();*/
 	}
 		
 

@@ -25,7 +25,7 @@ public:
 	float GetBoundingSphereCentreZ();
 	float GetBoundingSphereRadius();
 	XMVECTOR GetBoundingSphereWorldSpacePosition();
-	ObjFileModel* GetObject();
+	ObjFileModel* GetModelObject();
 
 	void SetTexture(ID3D11ShaderResourceView* Texture);
 	void SetSampler(ID3D11SamplerState* Sampler);

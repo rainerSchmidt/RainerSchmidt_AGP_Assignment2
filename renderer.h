@@ -48,6 +48,7 @@ class Renderer
 		
 		//SceneNodes
 		SceneNode*						g_pRootNode;
+		SceneNode*						g_pEnemiesNode;
 		SceneNode*						g_pPlayer;
 		SceneNode*						g_pEnemy;
 		SceneNode*						g_pEnemy2;

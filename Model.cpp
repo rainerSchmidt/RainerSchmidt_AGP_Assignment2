@@ -345,7 +345,7 @@ float Model::GetBoundingSphereCentreX() { return m_bounding_sphere_centre_x; }
 float Model::GetBoundingSphereCentreY() { return m_bounding_sphere_centre_y; }
 float Model::GetBoundingSphereCentreZ() { return m_bounding_sphere_centre_z; }
 float Model::GetBoundingSphereRadius() { return m_bounding_sphere_centre_radius; }
-ObjFileModel* Model::GetObject() { return m_pObject; }
+ObjFileModel* Model::GetModelObject() { return m_pObject; }
 
 
 void Model::SetTexture(ID3D11ShaderResourceView* Texture) { m_pTexture0 = Texture; }

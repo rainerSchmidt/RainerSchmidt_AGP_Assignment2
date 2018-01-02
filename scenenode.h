@@ -5,6 +5,7 @@
 //#include <xnamath.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
+#include "maths.h"
 
 using namespace DirectX;
 
@@ -13,6 +14,7 @@ class SceneNode
 private:
 	Model*				m_pModel;
 	vector<SceneNode*>	m_children;
+	XMMATRIX			m_local_world_matrix;
 
 	float m_x, m_y, m_z;
 	float m_xangle, m_zangle, m_yangle;
@@ -25,13 +27,14 @@ public:
 	~SceneNode();
 
 	void LookAt_XZ(float X, float Z);
-	void Rotate(float Amount);
-	bool MoveForwards(float Distance, SceneNode* RootNode);
-	bool MoveUp(float Distance, SceneNode* RootNode);
-	bool Strafe(float Distance, SceneNode* RootNode);
+	void Rotate(float Amount, SceneNode* RootNode);
+	bool MoveForwards(float Distance, SceneNode* RootNode, bool CollisionCheck);
+	bool MoveUp(float Distance, SceneNode* RootNode, bool CollisionCheck);
+	bool Strafe(float Distance, SceneNode* RootNode, bool CollisionCheck);
 	bool CheckCollision(SceneNode* CompareTree);
 	bool CheckCollision(SceneNode* CompareTree, SceneNode* ObjectTreeRoot);
 	void UpdateCollisionTree(XMMATRIX* World, float Scale);
+	bool CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY, float DirPosZ);
 
 	float GetX();
 	float GetY();
