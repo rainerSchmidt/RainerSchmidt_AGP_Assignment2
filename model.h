@@ -29,6 +29,7 @@ public:
 
 	void SetTexture(ID3D11ShaderResourceView* Texture);
 	void SetSampler(ID3D11SamplerState* Sampler);
+	void SetLight(XMFLOAT4 DirectionalLightColor, XMFLOAT4 DirectionalLightShinesFrom, XMFLOAT4 AmbientLightColor);
 	void SetPosX(float pos);
 	void SetPosY(float pos);
 	void SetPosZ(float pos);

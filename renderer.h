@@ -11,6 +11,7 @@
 #include "scenenode.h"
 #include "input.h"
 #include "camera.h"
+#include "lighting.h"
 #include <chrono>
 #include <thread>
 using namespace DirectX;
@@ -42,6 +43,7 @@ class Renderer
 		ID3D11DepthStencilView*			g_pZBuffer;
 		Input*							g_pInput;
 		Camera*							g_pCamera;
+		Light*							g_pLight;
 
 		//Models 
 		Model*							g_pModelPlane;

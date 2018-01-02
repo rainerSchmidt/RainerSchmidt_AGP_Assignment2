@@ -21,15 +21,33 @@ Renderer::~Renderer()
 
 HRESULT Renderer::InitialiseGraphicsElements()
 {
+	//initialise light values
+	g_pLight = new Light();
+	g_pLight->InitialiseLighting();
+
+	/*XMVECTOR dirCol = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
+	XMVECTOR dirVec = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+	XMVECTOR ambCol = XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f);*/
+
+	/*XMFLOAT4 dirCol = { 1.0f, 1.0f, 1.0f, 0.0f};
+	XMFLOAT4 dirVec = { 0.0f, 0.0f, -1.0f, 0.0f};
+	XMFLOAT4 ambCol = { 0.2f, 0.2f, 0.2f, 1.0f};*/
+
 	//initialise Models
 	g_pModelPlane = new Model(g_pD3DDevice, g_pImmediateContext);
 	g_pModelPlane->LoadObjModel("assets/cube.obj");
+	g_pModelPlane->SetLight(g_pLight->GetDirectionalLightColor(), g_pLight->GetDirectionalLightShinesFrom(), g_pLight->GetAmbientLightColor());
+	//g_pModelPlane->SetLight(dirCol, dirVec, ambCol);
 
 	g_pModelCube = new Model(g_pD3DDevice, g_pImmediateContext);
 	g_pModelCube->LoadObjModel("assets/cube.obj");
+	g_pModelCube->SetLight(g_pLight->GetDirectionalLightColor(), g_pLight->GetDirectionalLightShinesFrom(), g_pLight->GetAmbientLightColor());
+	//g_pModelCube->SetLight(dirCol, dirVec, ambCol);
 
 	g_pModelSphere = new Model(g_pD3DDevice, g_pImmediateContext);
 	g_pModelSphere->LoadObjModel("assets/Sphere.obj");
+	g_pModelSphere->SetLight(g_pLight->GetDirectionalLightColor(), g_pLight->GetDirectionalLightShinesFrom(), g_pLight->GetAmbientLightColor());
+	//g_pModelSphere->SetLight(dirCol, dirVec, ambCol);
 
 	//load grass texture from file
 	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/grass.jpg", NULL, NULL, &g_pTextureGrass, NULL)))
@@ -52,16 +70,16 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	//set up Scene Nodes
 	g_pRootNode = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	g_pEnemiesNode = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pGround = new SceneNode(0.0f, -1.2f, 55.0f, 0.0f, 0.0f, 0.0f, 20.0f, 0.2f, 50.0f);
+	g_pGround = new SceneNode(0.0f, -1.2f, 105.0f, 0.0f, 0.0f, 0.0f, 20.0f, 0.2f, 100.0f);
 	g_pGround->SetModel(g_pModelCube);
 
 	g_pPlayer = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pPlayer->SetModel(g_pModelSphere);
+	g_pPlayer->SetModel(g_pModelCube);
 
 	g_pEnemy = new SceneNode(3.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	g_pEnemy->SetModel(g_pModelCube);
-	g_pEnemy2 = new SceneNode(0.0f, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pEnemy2->SetModel(g_pModelCube);
+	g_pEnemy2 = new SceneNode(0.0f, 0.7f, 20.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemy2->SetModel(g_pModelSphere);
 	
 	g_pRootNode->AddChildNode(g_pEnemiesNode);
 	g_pRootNode->AddChildNode(g_pPlayer);
@@ -226,6 +244,7 @@ void Renderer::CleanUp()
 	if (g_pModelPlane) delete g_pModelPlane;
 	if (g_pModelCube) delete g_pModelCube;
 	if (g_pModelSphere) delete g_pModelSphere;
+	if (g_pLight) delete g_pLight;
 
 	////detach child nodes from RootNode and delete child nodes
 	//if (g_pPlayer)

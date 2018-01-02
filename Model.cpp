@@ -155,11 +155,11 @@ void Model::Draw(XMMATRIX* World, XMMATRIX * view, XMMATRIX * projection)
 	m_pImmediateContext->UpdateSubresource(m_pTransformationBuffer, 0, 0, &model_cbTransformation_values, 0, 0);
 
 
-	//Set Light Buffer Values
-	m_DirectionalLightShinesFrom = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
-	m_DirectionalLightColor = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
-	m_AmbientLightColor = XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f);
+	//m_DirectionalLightShinesFrom = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+	//m_DirectionalLightColor = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
+	//m_AmbientLightColor = XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f);
 
+	//Set Light Buffer Values
 	LightBuffer model_cbLight_values;
 	XMMATRIX transpose;
 
@@ -349,7 +349,20 @@ float Model::GetBoundingSphereCentreZ() { return m_bounding_sphere_centre_z; }
 float Model::GetBoundingSphereRadius() { return m_bounding_sphere_centre_radius; }
 ObjFileModel* Model::GetModelObject() { return m_pObject; }
 
+void Model::SetLight(XMFLOAT4 DirColor, XMFLOAT4 DirVector, XMFLOAT4 AmbColor)
+{
+	/*m_DirectionalLightColor = XMVectorSet(DirectionalLightColor.vector4_f32[0], DirectionalLightColor.vector4_f32[1], DirectionalLightColor.vector4_f32[2], 0.0f);
+	m_DirectionalLightShinesFrom = XMVectorSet(DirectionalLightShinesFrom.vector4_f32[0], DirectionalLightShinesFrom.vector4_f32[1], DirectionalLightShinesFrom.vector4_f32[2], 0.0f);
+	m_AmbientLightColor = XMVectorSet(AmbientLightColor.vector4_f32[0], AmbientLightColor.vector4_f32[1], AmbientLightColor.vector4_f32[2], 0.0f);*/
 
+	/*m_DirectionalLightColor = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
+	m_DirectionalLightShinesFrom = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+	m_AmbientLightColor = XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f);*/
+
+	m_DirectionalLightColor = XMVectorSet(DirColor.x, DirColor.y, DirColor.z, DirColor.w);
+	m_DirectionalLightShinesFrom = XMVectorSet(DirVector.x, DirVector.y, DirVector.z, DirVector.w);
+	m_AmbientLightColor = XMVectorSet(AmbColor.x, AmbColor.y, AmbColor.z, AmbColor.w);
+}
 void Model::SetTexture(ID3D11ShaderResourceView* Texture) { m_pTexture0 = Texture; }
 void Model::SetSampler(ID3D11SamplerState* Sampler) { m_pSampler0 = Sampler; }
 
