@@ -49,6 +49,9 @@ class Renderer
 		Model*							g_pModelPlane;
 		Model*							g_pModelCube;
 		Model*							g_pModelSphere;
+		Model*							g_pModelPyramid;
+		Model*							g_pModelGate;
+		Model*							g_pModelCoin;
 		
 		//SceneNodes
 		SceneNode*						g_pRootNode;

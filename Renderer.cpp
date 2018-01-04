@@ -25,51 +25,65 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	g_pLight = new Light();
 	g_pLight->InitialiseLighting();
 
-	/*XMVECTOR dirCol = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
-	XMVECTOR dirVec = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
-	XMVECTOR ambCol = XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f);*/
-
-	/*XMFLOAT4 dirCol = { 1.0f, 1.0f, 1.0f, 0.0f};
-	XMFLOAT4 dirVec = { 0.0f, 0.0f, -1.0f, 0.0f};
-	XMFLOAT4 ambCol = { 0.2f, 0.2f, 0.2f, 1.0f};*/
-
 	//initialise Models
 	g_pModelPlane = new Model(g_pD3DDevice, g_pImmediateContext);
 	g_pModelPlane->LoadObjModel("assets/cube.obj");
 	g_pModelPlane->SetLight(g_pLight->GetDirectionalLightColor(), g_pLight->GetDirectionalLightShinesFrom(), g_pLight->GetAmbientLightColor());
-	//g_pModelPlane->SetLight(dirCol, dirVec, ambCol);
 
 	g_pModelCube = new Model(g_pD3DDevice, g_pImmediateContext);
 	g_pModelCube->LoadObjModel("assets/cube.obj");
 	g_pModelCube->SetLight(g_pLight->GetDirectionalLightColor(), g_pLight->GetDirectionalLightShinesFrom(), g_pLight->GetAmbientLightColor());
-	//g_pModelCube->SetLight(dirCol, dirVec, ambCol);
 
 	g_pModelSphere = new Model(g_pD3DDevice, g_pImmediateContext);
 	g_pModelSphere->LoadObjModel("assets/Sphere.obj");
 	g_pModelSphere->SetLight(g_pLight->GetDirectionalLightColor(), g_pLight->GetDirectionalLightShinesFrom(), g_pLight->GetAmbientLightColor());
-	//g_pModelSphere->SetLight(dirCol, dirVec, ambCol);
+
+	g_pModelCoin = new Model(g_pD3DDevice, g_pImmediateContext);
+	g_pModelCoin->LoadObjModel("assets/edgedcoin.obj");
+	g_pModelCoin->SetLight(g_pLight->GetDirectionalLightColor(), g_pLight->GetDirectionalLightShinesFrom(), g_pLight->GetAmbientLightColor());
+
+	g_pModelGate = new Model(g_pD3DDevice, g_pImmediateContext);
+	g_pModelGate->LoadObjModel("assets/doorway.obj");
+	g_pModelGate->SetLight(g_pLight->GetDirectionalLightColor(), g_pLight->GetDirectionalLightShinesFrom(), g_pLight->GetAmbientLightColor());
+
+	g_pModelPyramid = new Model(g_pD3DDevice, g_pImmediateContext);
+	g_pModelPyramid->LoadObjModel("assets/reversepyramid.obj");
+	g_pModelPyramid->SetLight(g_pLight->GetDirectionalLightColor(), g_pLight->GetDirectionalLightShinesFrom(), g_pLight->GetAmbientLightColor());
 
 	//load grass texture from file
 	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/grass.jpg", NULL, NULL, &g_pTextureGrass, NULL)))
 		OutputDebugString("There was an error loading the texture file!");
 	else
+	{
 		g_pModelPlane->SetTexture(g_pTextureGrass);
+		g_pModelCoin->SetTexture(g_pTextureGrass);
+	}
+		
 
 	//load wall texture from file
 	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/wall.jpg", NULL, NULL, &g_pTextureWall, NULL)))
 		OutputDebugString("There was an error loading the texture file!");
 	else
+	{
 		g_pModelCube->SetTexture(g_pTextureWall);
+		g_pModelPyramid->SetTexture(g_pTextureWall);
+		g_pModelGate->SetTexture(g_pTextureWall);
+	}
+		
 
 	//load tile texture from file
 	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/tile.jpg", NULL, NULL, &g_pTextureTile, NULL)))
 		OutputDebugString("There was an error loading the texture file!");
 	else
+	{
+		g_pModelGate->SetTexture(g_pTextureTile);
 		g_pModelSphere->SetTexture(g_pTextureTile);
+	}
+		
 	
 	//set up Scene Nodes
 	g_pRootNode = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pEnemiesNode = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemiesNode = new SceneNode(0.0f, -0.75f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	g_pGround = new SceneNode(0.0f, -1.2f, 105.0f, 0.0f, 0.0f, 0.0f, 20.0f, 0.2f, 100.0f);
 	g_pGround->SetModel(g_pModelCube);
 
@@ -77,9 +91,9 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	g_pPlayer->SetModel(g_pModelCube);
 
 	g_pEnemy = new SceneNode(3.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pEnemy->SetModel(g_pModelCube);
-	g_pEnemy2 = new SceneNode(0.0f, 0.7f, 20.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pEnemy2->SetModel(g_pModelSphere);
+	g_pEnemy->SetModel(g_pModelPyramid);
+	g_pEnemy2 = new SceneNode(0.0f, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemy2->SetModel(g_pModelGate);
 	
 	g_pRootNode->AddChildNode(g_pEnemiesNode);
 	g_pRootNode->AddChildNode(g_pPlayer);
@@ -96,7 +110,7 @@ HRESULT Renderer::InitialiseGraphicsElements()
 void Renderer::ClearBackBuffer()
 {
 	//// Clear the back buffer - choose a colour you like
-	float rgba_clear_colour[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float rgba_clear_colour[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
 	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
 	g_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
