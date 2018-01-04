@@ -9,7 +9,7 @@ Renderer::Renderer(ID3D11Device* D3DDevice, ID3D11DeviceContext* DeviceContext, 
 	g_pBackBufferRTView = BackBuffer;
 	g_pZBuffer = ZBuffer;
 	g_pInput = Input;
-	g_pCamera = new Camera(0.0, 0.0, 0.0, 0.0);
+	g_pCamera = new Camera(0.0, 0.0, 3.0, 0.0);
 	
 }
 
@@ -82,25 +82,93 @@ HRESULT Renderer::InitialiseGraphicsElements()
 		
 	
 	//set up Scene Nodes
+	//RootNode
 	g_pRootNode = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pEnemiesNode = new SceneNode(0.0f, -0.75f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pGround = new SceneNode(0.0f, -1.2f, 105.0f, 0.0f, 0.0f, 0.0f, 20.0f, 0.2f, 100.0f);
-	g_pGround->SetModel(g_pModelCube);
 
-	g_pPlayer = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	//Collideables
+	g_pCollideable = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+
+	//Enemies
+	g_pEnemies[0] = new SceneNode(11.0f, -1.2f, 31.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemies[1] = new SceneNode(11.0f, -1.2f, 46.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemies[2] = new SceneNode(-7.0f, -1.2f, 45.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemies[3] = new SceneNode(-9.0f, -1.2f, 79.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+
+	//Collectables
+	g_pCollectables[0] = new SceneNode(-5.0f, -0.2f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pCollectables[1] = new SceneNode(-9.0f, -0.2f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pCollectables[2] = new SceneNode(11.0f, -0.2f, 8.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pCollectables[3] = new SceneNode(11.0f, -0.2f, 11.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pCollectables[4] = new SceneNode(11.0f, -0.2f, 14.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pCollectables[5] = new SceneNode(11.0f, -0.2f, 17.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pCollectables[6] = new SceneNode(11.0f, -0.2f, 20.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pCollectables[7] = new SceneNode(-4.0f, -0.2f, 32.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pCollectables[8] = new SceneNode(-13.0f, -0.2f, 40.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pCollectables[9] = new SceneNode(10.0f, -0.2f, 80.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pCollectables[10] = new SceneNode(10.0f, -0.2f, 83.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pCollectables[11] = new SceneNode(10.0f, -0.2f, 86.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+
+	//Obstacles
+	g_pObstacles[0] = new SceneNode(3.0f, 0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 5.0f);
+	g_pObstacles[1] = new SceneNode(-2.0f, 0.0f, 38.0f, 0.0f, 0.0f, 0.0f, 3.0f, 1.0f, 1.0f);
+	g_pObstacles[2] = new SceneNode(-8.0f, 0.0f, 34.0f, 0.0f, 0.0f, 0.0f, 3.0f, 1.0f, 1.0f);
+	g_pObstacles[3] = new SceneNode(12.0f, 0.0f, 67.0f, 0.0f, 0.0f, 0.0f, 7.0f, 1.0f, 1.0f);
+	g_pObstacles[4] = new SceneNode(-5.0f, 0.0f, 67.0f, 0.0f, 0.0f, 0.0f, 7.0f, 1.0f, 1.0f);
+
+	//Moveables
+	g_pMoveable[0] = new SceneNode(3.5f, 0.0f, 67.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+
+	//PlayerNode
+	g_pPlayer = new SceneNode(0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	g_pPlayer->SetModel(g_pModelCube);
 
-	g_pEnemy = new SceneNode(3.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pEnemy->SetModel(g_pModelPyramid);
-	g_pEnemy2 = new SceneNode(0.0f, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pEnemy2->SetModel(g_pModelGate);
-	
-	g_pRootNode->AddChildNode(g_pEnemiesNode);
-	g_pRootNode->AddChildNode(g_pPlayer);
-	g_pRootNode->AddChildNode(g_pGround);
+	//EndNode
+	g_pEndNode = new SceneNode(0.0f, -1.2f, 98.0f, 0.0f, 0.0f, 0.0f, 5.0f, 5.0f, 5.0f);
+	g_pEndNode->SetModel(g_pModelGate);
 
-	g_pEnemiesNode->AddChildNode(g_pEnemy);
-	g_pEnemiesNode->AddChildNode(g_pEnemy2);
+	//Decorations
+	g_pDecorations = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pGround = new SceneNode(0.0f, -1.2f, 0.0f, 0.0f, 0.0f, 0.0f, 20.0f, 0.2f, 100.0f);
+	g_pGround->SetModel(g_pModelPlane);
+	
+	//Append Child Nodes for RootNode
+	g_pRootNode->AddChildNode(g_pCollideable);
+	g_pRootNode->AddChildNode(g_pDecorations);
+	g_pRootNode->AddChildNode(g_pPlayer);
+
+	for (int i = 0; i < ARRAYSIZE(g_pEnemies); i++) //Enemies
+	{
+		g_pCollideable->AddChildNode(g_pEnemies[i]);
+		g_pEnemies[i]->SetModel(g_pModelPyramid);
+
+		SceneNode* Node = new SceneNode(0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.2f, 0.2f, 0.2f);
+		Node->SetModel(g_pModelSphere);
+
+		g_pEnemies[i]->AddChildNode(Node);
+	}
+
+	for (int i = 0; i < ARRAYSIZE(g_pCollectables); i++) //Collectables
+	{
+		g_pCollideable->AddChildNode(g_pCollectables[i]);
+		g_pCollectables[i]->SetModel(g_pModelCoin);
+	}
+
+	for (int i = 0; i < ARRAYSIZE(g_pObstacles); i++) //Obstacles
+	{
+		g_pCollideable->AddChildNode(g_pObstacles[i]);
+		g_pObstacles[i]->SetModel(g_pModelCube);
+	}
+
+	for (int i = 0; i < ARRAYSIZE(g_pMoveable); i++) //Moveables
+	{
+		g_pCollideable->AddChildNode(g_pMoveable[i]);
+		g_pMoveable[i]->SetModel(g_pModelCube);
+	}
+
+	g_pCollideable->AddChildNode(g_pEndNode);
+
+	////Append Child Nodes for DevorationsNode
+	g_pRootNode->AddChildNode(g_pGround);
 
 	//set Text with font from file
 	g_pText2D = new Text2D("assets/font1.bmp", g_pD3DDevice, g_pImmediateContext);
@@ -110,7 +178,7 @@ HRESULT Renderer::InitialiseGraphicsElements()
 void Renderer::ClearBackBuffer()
 {
 	//// Clear the back buffer - choose a colour you like
-	float rgba_clear_colour[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
+	float rgba_clear_colour[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
 	g_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
@@ -186,7 +254,7 @@ void Renderer::RenderFrame()
 	// Select which primitive type to use //03-01
 	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	g_pInput->KeyLogic(g_pCamera, g_pRootNode, g_pPlayer, g_pEnemiesNode);
+	g_pInput->KeyLogic(g_pCamera, g_pRootNode, g_pPlayer, g_pCollideable);
 	g_pInput->MouseLogic(g_pCamera, g_pPlayer, g_pRootNode);
 	FrameLimit();
 	Draw();
@@ -207,7 +275,7 @@ void Renderer::Gravity()
 	//only call MoveUp function when velocity is not zero
 	if (g_pCamera->GetVelocityY() != 0.0f)
 	{
-		if (!g_pPlayer->MoveUp(g_pCamera->GetVelocityY(), g_pRootNode, g_pEnemiesNode, true))
+		if (!g_pPlayer->MoveUp(g_pCamera->GetVelocityY(), g_pRootNode, g_pCollideable, true))
 		{
 			g_pCamera->MoveUp();
 
@@ -255,6 +323,10 @@ void Renderer::CleanUp()
 	if (g_pTextureGrass) g_pTextureGrass->Release();
 	if (g_pTextureTile) g_pTextureTile->Release();
 	if (g_pTextureWall) g_pTextureWall->Release();
+	if (g_pModelBlock) delete g_pModelBlock;
+	if (g_pModelCoin) delete g_pModelCoin;
+	if (g_pModelGate) delete g_pModelGate;
+	if (g_pModelPyramid) delete g_pModelPyramid;
 	if (g_pModelPlane) delete g_pModelPlane;
 	if (g_pModelCube) delete g_pModelCube;
 	if (g_pModelSphere) delete g_pModelSphere;

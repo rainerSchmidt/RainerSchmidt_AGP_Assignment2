@@ -44,7 +44,7 @@ VOut VShader(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
 
 float4 PShader(float4 position : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD, float3 normal : NORMAL) : SV_TARGET
 {
-	/*float diffuseAmount = dot(directional_light_vector, normal);
+	/*float diffuseAmount = dot(-directional_light_vector, normal);
 	diffuseAmount = saturate(diffuseAmount);
 
 	return (color + (directional_light_color * diffuseAmount))*texture0.Sample(sampler0, texcoord);*/

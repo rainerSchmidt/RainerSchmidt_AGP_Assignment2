@@ -235,7 +235,7 @@ void SceneNode::UpdateCollisionTree(XMMATRIX* World, float Scale)
 	m_local_world_matrix *= XMMatrixTranslation(m_x, m_y, m_z);
 	
 	m_local_world_matrix *= *World;
-	m_world_scale = Scale;
+	m_world_scale = (m_scaleX + m_scaleY + m_scaleZ) * Scale;
 	//m_world_scale = Scale * m_scale;
 
 	XMVECTOR v;

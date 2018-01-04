@@ -47,6 +47,7 @@ class Renderer
 
 		//Models 
 		Model*							g_pModelPlane;
+		Model*							g_pModelBlock;
 		Model*							g_pModelCube;
 		Model*							g_pModelSphere;
 		Model*							g_pModelPyramid;
@@ -55,9 +56,13 @@ class Renderer
 		
 		//SceneNodes
 		SceneNode*						g_pRootNode;
-		SceneNode*						g_pEnemiesNode;
-		SceneNode*						g_pEnemy;
-		SceneNode*						g_pEnemy2;
+		SceneNode*						g_pCollideable;
+		SceneNode*						g_pDecorations;
+		SceneNode*						g_pEnemies [4];
+		SceneNode*						g_pObstacles[5];
+		SceneNode*						g_pCollectables[12];
+		SceneNode*						g_pMoveable[1];
+		SceneNode*						g_pEndNode;
 		SceneNode*						g_pPlayer;
 		SceneNode*						g_pGround;
 
