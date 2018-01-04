@@ -72,7 +72,7 @@ HRESULT Renderer::InitialiseGraphicsElements()
 		
 
 	//load tile texture from file
-	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/tile.jpg", NULL, NULL, &g_pTextureTile, NULL)))
+	if (FAILED(D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/tiles.jpg", NULL, NULL, &g_pTextureTile, NULL)))
 		OutputDebugString("There was an error loading the texture file!");
 	else
 	{
@@ -165,10 +165,11 @@ HRESULT Renderer::InitialiseGraphicsElements()
 		g_pMoveable[i]->SetModel(g_pModelCube);
 	}
 
-	g_pCollideable->AddChildNode(g_pEndNode);
+	
 
 	////Append Child Nodes for DevorationsNode
-	g_pRootNode->AddChildNode(g_pGround);
+	g_pDecorations->AddChildNode(g_pGround);
+	g_pDecorations->AddChildNode(g_pEndNode);
 
 	//set Text with font from file
 	g_pText2D = new Text2D("assets/font1.bmp", g_pD3DDevice, g_pImmediateContext);
@@ -275,12 +276,12 @@ void Renderer::Gravity()
 	//only call MoveUp function when velocity is not zero
 	if (g_pCamera->GetVelocityY() != 0.0f)
 	{
-		if (!g_pPlayer->MoveUp(g_pCamera->GetVelocityY(), g_pRootNode, g_pCollideable, true))
+		if (!g_pPlayer->MoveUp(g_pCamera->GetVelocityY(), g_pRootNode, g_pCollideable, g_pPlayer, true))
 		{
 			g_pCamera->MoveUp();
 
 			XMMATRIX identity = XMMatrixIdentity();
-			g_pRootNode->UpdateCollisionTree(&identity, 1.0f);
+			g_pRootNode->UpdateCollisionTree(&identity, 1.0f, g_pPlayer);
 		}
 		else
 		{
@@ -301,7 +302,7 @@ void Renderer::Gravity()
 		g_pCamera->SetY(0.0f);
 
 		XMMATRIX identity = XMMatrixIdentity();
-		g_pRootNode->UpdateCollisionTree(&identity, 1.0f);
+		g_pRootNode->UpdateCollisionTree(&identity, 1.0f, g_pPlayer);
 	}
 }
 

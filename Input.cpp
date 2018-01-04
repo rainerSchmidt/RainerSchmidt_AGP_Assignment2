@@ -106,23 +106,23 @@ void Input::KeyLogic(Camera* Cam,SceneNode* RootNode, SceneNode* Node, SceneNode
 
 	if (IsKeyPressed(DIK_W))
 	{
-		if (!Node->MoveForwards(g_MoveSpeed, RootNode, Enemies, true))
+		if (!Node->MoveForwards(g_MoveSpeed, RootNode, Enemies, Node, true))
 			Cam->Forward(g_MoveSpeed);
 	}
 		
 	if (IsKeyPressed(DIK_S))
 	{
-		if (!Node->MoveForwards(-g_MoveSpeed, RootNode, Enemies, true))
+		if (!Node->MoveForwards(-g_MoveSpeed, RootNode, Enemies, Node, true))
 			Cam->Forward(-g_MoveSpeed);
 	}
 	if (IsKeyPressed(DIK_A))
 	{
-		if (!Node->Strafe(-g_MoveSpeed, RootNode, Enemies, true))
+		if (!Node->Strafe(-g_MoveSpeed, RootNode, Enemies, Node, true))
 			Cam->Strafe(-g_MoveSpeed);
 	}
 	if (IsKeyPressed(DIK_D))
 	{
-		if (!Node->Strafe(g_MoveSpeed, RootNode, Enemies, true))
+		if (!Node->Strafe(g_MoveSpeed, RootNode, Enemies, Node, true))
 			Cam->Strafe(g_MoveSpeed);
 	}
 	if (IsKeyPressed(DIK_SPACE))
@@ -131,11 +131,11 @@ void Input::KeyLogic(Camera* Cam,SceneNode* RootNode, SceneNode* Node, SceneNode
 		{
 			pressed = true;
 			Cam->AddVelocityY(0.75f);
-			if (!Node->MoveUp(Cam->GetVelocityY(), RootNode, Enemies, true))
+			if (!Node->MoveUp(Cam->GetVelocityY(), RootNode, Enemies, Node, true))
 				Cam->MoveUp();
 
 			XMMATRIX identity = XMMatrixIdentity();
-			RootNode->UpdateCollisionTree(&identity, 1.0f);
+			RootNode->UpdateCollisionTree(&identity, 1.0f, Node);
 		}
 	}
 }
@@ -143,7 +143,7 @@ void Input::KeyLogic(Camera* Cam,SceneNode* RootNode, SceneNode* Node, SceneNode
 void Input::MouseLogic(Camera* Cam, SceneNode* Node, SceneNode* RootNode)
 {
 	Cam->Rotate(g_mouse_state.lX* 0.5f);
-	Node->Rotate(g_mouse_state.lX*0.5f, RootNode);
+	Node->Rotate(g_mouse_state.lX*0.5f, RootNode, Node);
 }
 
 void Input::SetPressed(bool Status) { pressed = Status; }

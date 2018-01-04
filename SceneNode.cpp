@@ -69,7 +69,7 @@ void SceneNode::LookAt_XZ(float X, float Z)
 	m_yangle = atan2(DX, DZ) * (180.0 / XM_PI);
 }
 
-bool SceneNode::MoveForwards(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, bool CollisionCheck)
+bool SceneNode::MoveForwards(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, SceneNode* Player, bool CollisionCheck)
 {
 	float old_x = m_x;
 	float old_z = m_z;
@@ -82,7 +82,7 @@ bool SceneNode::MoveForwards(float Distance, SceneNode* RootNode, SceneNode* Col
 	//since state has changed, need to update collision tree
 	//this basic system requires entire hierarchy to be updated
 	//so start at root_node passing in identity matrix
-	RootNode->UpdateCollisionTree(&Identity, 1.0);
+	RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
 	if (CollisionCheck)
 	{
 		if (CollisionObjects->CheckCollisionRay(this, m_x, m_y, m_z) == true)
@@ -98,7 +98,7 @@ bool SceneNode::MoveForwards(float Distance, SceneNode* RootNode, SceneNode* Col
 	return false;
 }
 
-bool SceneNode::MoveUp(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, bool CollisionCheck)
+bool SceneNode::MoveUp(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, SceneNode* Player, bool CollisionCheck)
 {
 	float old_y = m_y;
 	m_y += Distance;
@@ -108,7 +108,7 @@ bool SceneNode::MoveUp(float Distance, SceneNode* RootNode, SceneNode* Collision
 	//since state has changed, need to update collision tree
 	//this basic system requires entire hierarchy to be updated
 	//so start at root_node passing in identity matrix
-	RootNode->UpdateCollisionTree(&Identity, 1.0);
+	RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
 	if (CollisionCheck)
 	{
 		if (CollisionObjects->CheckCollisionRay(this, m_x, m_y, m_z) == true)
@@ -123,7 +123,7 @@ bool SceneNode::MoveUp(float Distance, SceneNode* RootNode, SceneNode* Collision
 	return false;
 }
 
-bool SceneNode::Strafe(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, bool CollisionCheck)
+bool SceneNode::Strafe(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, SceneNode* Player, bool CollisionCheck)
 {
 	float old_x = m_x;
 	float old_z = m_z;
@@ -140,7 +140,7 @@ bool SceneNode::Strafe(float Distance, SceneNode* RootNode, SceneNode* Collision
 	//since state has changed, need to update collision tree
 	//this basic system requires entire hierarchy to be updated
 	//so start at root_node passing in identity matrix
-	RootNode->UpdateCollisionTree(&Identity, 1.0);
+	RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
 	if (CollisionCheck)
 	{
 		if (CollisionObjects->CheckCollisionRay(this, m_x, m_y, m_z) == true)
@@ -157,7 +157,7 @@ bool SceneNode::Strafe(float Distance, SceneNode* RootNode, SceneNode* Collision
 
 }
 
-void SceneNode::Rotate(float Amount, SceneNode* RootNode)
+void SceneNode::Rotate(float Amount, SceneNode* RootNode, SceneNode* Player)
 {
 	m_yangle += Amount;
 	XMMATRIX Identity = XMMatrixIdentity();
@@ -165,7 +165,7 @@ void SceneNode::Rotate(float Amount, SceneNode* RootNode)
 	//since state has changed, need to update collision tree
 	//this basic system requires entire hierarchy to be updated
 	//so start at root_node passing in identity matrix
-	RootNode->UpdateCollisionTree(&Identity, 1.0);
+	RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
 }
 
 bool SceneNode::CheckCollision(SceneNode* CompareTree)
@@ -223,7 +223,7 @@ bool SceneNode::CheckCollision(SceneNode* CompareTree, SceneNode* ObjectTreeRoot
 	return false;
 }
 
-void SceneNode::UpdateCollisionTree(XMMATRIX* World, float Scale)
+void SceneNode::UpdateCollisionTree(XMMATRIX* World, float Scale, SceneNode* Player)
 {
 
 	m_local_world_matrix = XMMatrixIdentity();
@@ -256,23 +256,20 @@ void SceneNode::UpdateCollisionTree(XMMATRIX* World, float Scale)
 	m_world_centerY = XMVectorGetY(v);
 	m_world_centerZ = XMVectorGetZ(v);
 
+	//check if object still needs to be calculated for collision
+	CheckIfCloseToPlayer(Player);
+
 	// traverse all childe nodes, passing in the concatenated world matrix and scale
 	for (int i = 0; i < m_children.size(); i++)
 	{
-		m_children[i]->UpdateCollisionTree(&m_local_world_matrix, m_world_scale);
+		m_children[i]->UpdateCollisionTree(&m_local_world_matrix, m_world_scale, Player);
 	}
 
 }
 
 bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY, float DirPosZ)
 {
-	
-
-	//XMVECTOR ray = XMVectorSet(DirPosX, DirPosY, DirPosZ, 0.0);
-
-
 	XMVECTOR rayStart = XMVectorSet(Node->GetX(), Node->GetY(), Node->GetZ(), 0.0);
-	//XMVECTOR rayStart = XMVectorSet(RayPosX, RayPosY, RayPosZ, 0.0);
 
 	ObjFileModel::xyz* vectorRayStart = new ObjFileModel::xyz;
 	vectorRayStart->x = rayStart.vector4_f32[0];
@@ -285,7 +282,7 @@ bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY,
 	vectorRayEnd->z = rayStart.vector4_f32[2] + DirPosZ;
 
 
-	if (m_pModel)
+	if (m_pModel && m_IsCollideable)
 	{
 		float distanceRayToNode = sqrt(((m_x - Node->GetX())*(m_x - Node->GetX())) +
 			((m_y - Node->GetY())*(m_y - Node->GetY())) +
@@ -369,6 +366,14 @@ bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY,
 	return false;
 }
 
+void SceneNode::CheckIfCloseToPlayer(SceneNode* Player)
+{
+	if ((Player->GetZ() - m_z) > -2.0f && (Player->GetZ() - m_z) < 2.0f)
+		m_IsCollideable = true;
+	else
+		m_IsCollideable = false;
+}
+
 //SETTER
 void SceneNode::SetPosX(float X) { m_x = X; }
 void SceneNode::SetPosY(float Y) { m_y = Y; }
@@ -379,6 +384,7 @@ void SceneNode::SetRotY(float Amount) { m_yangle = Amount; }
 void SceneNode::SetRotZ(float Amount) { m_zangle = Amount; }
 //void SceneNode::SetScale(float Amount) { m_scale = Amount; }
 void SceneNode::SetModel(Model* Model) { m_pModel = Model; }
+void SceneNode::SetTag(SceneNode::Tag NodeTag) { m_tag = NodeTag; }
 
 //GETTER
 Model* SceneNode::GetModel() { return m_pModel; };
@@ -393,3 +399,4 @@ float SceneNode::GetZ() { return m_z; }
 float SceneNode::GetRotX() { return m_xangle; }
 float SceneNode::GetRotY() { return m_yangle; }
 float SceneNode::GetRotZ() { return m_zangle; }
+SceneNode::Tag SceneNode::GetNodeTag() { return m_tag; }
