@@ -376,13 +376,12 @@ bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY,
 						if (m_tag == Enemy)
 						{
 							//You have been hit by the enemy, the player is send back to the beginning;
-							Node->SetPosX(0.0f);
-							Node->SetPosY(0.0f);
-							Node->SetPosZ(3.0f);
+							Node->MoveForwards(-1*(Node->GetZ()), RootNode, NULL, Node, false);
+							Node->Strafe(-1 * (Node->GetX()), RootNode, NULL, Node, false);
 
 							//calling the moveforwards function will update the collision tree and
 							//make a check if the other objects need to be considered for collision detection.
-							Node->MoveForwards(0.0f, RootNode, NULL, Node, false);
+							//Node->MoveForwards(0.0f, RootNode, NULL, Node, false);
 						}
 
 						if (m_tag == Goal)

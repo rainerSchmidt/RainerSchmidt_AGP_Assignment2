@@ -13,6 +13,7 @@
 #include "camera.h"
 #include "lighting.h"
 #include "collectable.h"
+#include "enemyai.h"
 #include <chrono>
 #include <thread>
 using namespace DirectX;
@@ -47,6 +48,9 @@ class Renderer
 		Light*							g_pLight;
 		Collectable*					g_pCollectable;
 
+		//Enemies
+		EnemyAI*						g_pEnemies[4];
+
 		//Models 
 		Model*							g_pModelPlane;
 		Model*							g_pModelBlock;
@@ -60,10 +64,11 @@ class Renderer
 		SceneNode*						g_pRootNode;
 		SceneNode*						g_pCollideable;
 		SceneNode*						g_pDecorations;
-		SceneNode*						g_pEnemies [4];
+		SceneNode*						g_pEnemyNodes [4];
 		SceneNode*						g_pObstacles[5];
 		SceneNode*						g_pCollectables[12];
 		SceneNode*						g_pMoveable[1];
+		SceneNode*						g_pWayPoints[11];
 		SceneNode*						g_pEndNode;
 		SceneNode*						g_pPlayer;
 		SceneNode*						g_pGround;

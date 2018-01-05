@@ -26,6 +26,13 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	g_pLight = new Light();
 	g_pLight->InitialiseLighting();
 
+	//initialise Enemies
+	g_pEnemies[0] = new EnemyAI();
+	g_pEnemies[1] = new EnemyAI();
+	g_pEnemies[2] = new EnemyAI();
+	g_pEnemies[3] = new EnemyAI();
+
+
 	//initialise Models
 	g_pModelPlane = new Model(g_pD3DDevice, g_pImmediateContext);
 	g_pModelPlane->LoadObjModel("assets/cube.obj");
@@ -89,11 +96,31 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	//Collideables
 	g_pCollideable = new SceneNode(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 
+	//WayPoints
+	g_pWayPoints[0] = new SceneNode(7.0f, 0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pWayPoints[1] = new SceneNode(11.0f, 0.0f, 32.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pWayPoints[2] = new SceneNode(14.0f, 0.0f, 38.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pWayPoints[3] = new SceneNode(11.0f, 0.0f, 47.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pWayPoints[4] = new SceneNode(11.0f, 0.0f, 63.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pWayPoints[5] = new SceneNode(-7.0f, 0.0f, 46.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pWayPoints[6] = new SceneNode(-12.0f, 0.0f, 60.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pWayPoints[7] = new SceneNode(-5.0f, 0.0f, 63.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pWayPoints[8] = new SceneNode(7.0f, 0.0f, 81.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pWayPoints[9] = new SceneNode(-9.0f, 0.0f, 81.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pWayPoints[10] = new SceneNode(0.0f, 0.0f, 88.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+
+	//EnemyNodes
+	g_pEnemyNodes[0] = new SceneNode(11.0f, -1.2f, 31.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemyNodes[1] = new SceneNode(11.0f, -1.2f, 46.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemyNodes[2] = new SceneNode(-7.0f, -1.2f, 45.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemyNodes[3] = new SceneNode(-9.0f, -1.2f, 79.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+
 	//Enemies
-	g_pEnemies[0] = new SceneNode(11.0f, -1.2f, 31.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pEnemies[1] = new SceneNode(11.0f, -1.2f, 46.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pEnemies[2] = new SceneNode(-7.0f, -1.2f, 45.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	g_pEnemies[3] = new SceneNode(-9.0f, -1.2f, 79.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pEnemies[0]->SetWayPoints(g_pWayPoints[0], g_pWayPoints[1], g_pWayPoints[2]);
+	g_pEnemies[1]->SetWayPoints(g_pWayPoints[2], g_pWayPoints[3], g_pWayPoints[4]);
+	g_pEnemies[2]->SetWayPoints(g_pWayPoints[5], g_pWayPoints[6], g_pWayPoints[7]);
+	g_pEnemies[3]->SetWayPoints(g_pWayPoints[8], g_pWayPoints[9], g_pWayPoints[10]);
+
 
 	//Collectables
 	g_pCollectables[0] = new SceneNode(-5.0f, -0.2f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
@@ -137,16 +164,16 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	g_pRootNode->AddChildNode(g_pDecorations);
 	g_pRootNode->AddChildNode(g_pPlayer);
 
-	for (int i = 0; i < ARRAYSIZE(g_pEnemies); i++) //Enemies
+	for (int i = 0; i < ARRAYSIZE(g_pEnemyNodes); i++) //Enemies
 	{
-		g_pCollideable->AddChildNode(g_pEnemies[i]);
-		g_pEnemies[i]->SetModel(g_pModelPyramid);
-		g_pEnemies[i]->SetTag(g_pEnemies[i]->Enemy);
+		g_pCollideable->AddChildNode(g_pEnemyNodes[i]);
+		g_pEnemyNodes[i]->SetModel(g_pModelPyramid);
+		g_pEnemyNodes[i]->SetTag(g_pEnemyNodes[i]->Enemy);
 
-		SceneNode* Node = new SceneNode(0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.2f, 0.2f, 0.2f);
+		SceneNode* Node = new SceneNode(0.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.2f, 0.2f, 0.2f);
 		Node->SetModel(g_pModelSphere);
 
-		g_pEnemies[i]->AddChildNode(Node);
+		g_pEnemyNodes[i]->AddChildNode(Node);
 	}
 
 	for (int i = 0; i < ARRAYSIZE(g_pCollectables); i++) //Collectables
@@ -172,9 +199,15 @@ HRESULT Renderer::InitialiseGraphicsElements()
 
 	
 
-	////Append Child Nodes for DevorationsNode
+	////Append Child Nodes for DecorationsNode
 	g_pDecorations->AddChildNode(g_pGround);
 	g_pDecorations->AddChildNode(g_pEndNode);
+
+	for (int i = 0; i < ARRAYSIZE(g_pWayPoints); i++) //WayPoints
+	{
+		g_pDecorations->AddChildNode(g_pWayPoints[i]);
+		g_pMoveable[i]->SetTag(g_pMoveable[i]->Block);
+	}
 
 	//set Text with font from file
 	g_pText2D = new Text2D("assets/font1.bmp", g_pD3DDevice, g_pImmediateContext);
@@ -267,17 +300,18 @@ void Renderer::RenderFrame()
 	}
 
 	//Enemy Logic
-	//...
+	for (int i = 0; i < ARRAYSIZE(g_pEnemies); i++)
+	{
+		g_pEnemies[i]->Logic(g_pEnemyNodes[i], g_pRootNode, g_pCollideable, g_pPlayer);
+	}
 
-	////Camera check
-	//if ((g_pCamera->GetX() - g_pPlayer->GetX()) > 0.2f || (g_pCamera->GetX() - g_pPlayer->GetX()) > -0.2f
-	//	|| (g_pCamera->GetY() - g_pPlayer->GetY()) > 0.2f || (g_pCamera->GetY() - g_pPlayer->GetY()) > -0.2f
-	//	|| (g_pCamera->GetZ() - g_pPlayer->GetZ()) > 0.2f || (g_pCamera->GetZ() - g_pPlayer->GetZ()) > -0.2f)
-	//{
-	//	g_pCamera->SetX(g_pPlayer->GetX());
-	//	g_pCamera->SetY(g_pPlayer->GetY());
-	//	g_pCamera->SetZ(g_pPlayer->GetZ());
-	//}
+	//Camera check
+	if ((g_pCamera->GetX() - g_pPlayer->GetX()) > 2.0f || (g_pCamera->GetX() - g_pPlayer->GetX()) < -2.0f
+		|| (g_pCamera->GetZ() - g_pPlayer->GetZ()) > 2.0f || (g_pCamera->GetZ() - g_pPlayer->GetZ()) < -2.0f)
+	{
+		g_pCamera->Strafe(g_pCamera->GetX() - g_pPlayer->GetX());
+		g_pCamera->Forward(g_pCamera->GetZ() - g_pPlayer->GetZ());
+	}
 	
 	g_pInput->KeyLogic(g_pCamera, g_pRootNode, g_pPlayer, g_pCollideable);
 	g_pInput->MouseLogic(g_pCamera, g_pPlayer, g_pRootNode);
@@ -343,6 +377,14 @@ void Renderer::CleanUp()
 	if (g_pTransformationBuffer) g_pTransformationBuffer->Release();
 	if (g_pLightBuffer) g_pLightBuffer->Release();*/
 	if(g_pCamera) delete g_pCamera;
+
+	//Enemies
+	for (int i = 0; i < ARRAYSIZE(g_pEnemies); i++)
+	{
+		if(g_pEnemies[i]) delete g_pEnemies[i];
+	}
+
+	if (g_pCollectable) delete g_pCollectable;
 
 
 	if (g_pTextureGrass) g_pTextureGrass->Release();
