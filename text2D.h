@@ -4,14 +4,13 @@
 #include <d3d11.h>
 #include <d3dx11.h>
 #include <dxerr.h>
-//#include <xnamath.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <vector>
 using namespace std;
 using namespace DirectX;
 
-// store a sting with x and y coords (-1.0 to +1.0), and size (0.0+)
+// store a string with x and y coords (-1.0 to +1.0), and size (0.0+)
 struct string_2d
 {
 	string s;

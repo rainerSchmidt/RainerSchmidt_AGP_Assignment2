@@ -33,12 +33,10 @@ class Renderer
 		void CleanUp();
 		void ClearBackBuffer();
 		void Draw();
-		void KeyLogic();
 		void Gravity();
 
 		ID3D11Device*					g_pD3DDevice = NULL;
 		ID3D11DeviceContext*			g_pImmediateContext = NULL;
-		//HWND*							g_pHWnd = NULL;
 		IDXGISwapChain*					g_pSwapChain = NULL;
 
 		ID3D11RenderTargetView*			g_pBackBufferRTView = NULL;
@@ -65,7 +63,7 @@ class Renderer
 		SceneNode*						g_pCollideable;
 		SceneNode*						g_pDecorations;
 		SceneNode*						g_pEnemyNodes [4];
-		SceneNode*						g_pObstacles[5];
+		SceneNode*						g_pObstacles[14];
 		SceneNode*						g_pCollectables[12];
 		SceneNode*						g_pMoveable[1];
 		SceneNode*						g_pWayPoints[11];
@@ -75,22 +73,15 @@ class Renderer
 
 		chrono::system_clock::time_point startTime = chrono::system_clock::now();
 		chrono::system_clock::time_point endTime = chrono::system_clock::now();
-		Text2D*							g_pText2D;
-		//ID3D11VertexShader *	g_pVShader;
-		//ID3D11PixelShader *		g_pPShader;
-		//ID3D11InputLayout *		g_pInputLayout;
-		//ID3D11Buffer *			g_pTransformationBuffer;
-		//ID3D11Buffer *			g_pLightBuffer;
+		Text2D*							g_pTextFrames;
+		Text2D*							g_pTextTime;
+
 		ID3D11ShaderResourceView* g_pTextureGrass;
 		ID3D11ShaderResourceView* g_pTextureWall;
 		ID3D11ShaderResourceView* g_pTextureTile;
-		//ID3D11SamplerState*		g_pSampler0;
 
-		//DirectX::XMMATRIX projection, world, view;
-		//TransformationBuffer g_transBufferValues;
-
-		//Gravity variables
 		float g_gravity = -0.05f;
+		float g_time = 0;
 };
 
 

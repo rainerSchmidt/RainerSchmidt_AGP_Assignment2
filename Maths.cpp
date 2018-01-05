@@ -1,5 +1,10 @@
 #include "maths.h"
+////////////////////////////////////////////////////////////////////////////////
+//Math namespace for use in the SceneNode class
+//Taken from the Tutorials provided in AGP by the course leader Philip Alassad.
+////////////////////////////////////////////////////////////////////////////////
 
+//normalises a given vector and returns the result
 ObjFileModel::xyz* Maths::Normalise(ObjFileModel::xyz* v)
 {
 	ObjFileModel::xyz* vector = new ObjFileModel::xyz;
@@ -16,12 +21,14 @@ ObjFileModel::xyz* Maths::Normalise(ObjFileModel::xyz* v)
 	return vector;
 }
 
+//calculates the dot product of two given vectors and returns the result
 float Maths::DotProduct(ObjFileModel::xyz* v1, ObjFileModel::xyz* v2)
 {
 	float dot = (v1->x * v2->x) + (v1->y * v2->y) + (v1->z * v2->z);
 	return dot;
 }
 
+//calcluates the cross product of two given vectors and returns the result
 ObjFileModel::xyz* Maths::CrossProduct(ObjFileModel::xyz* v1, ObjFileModel::xyz* v2)
 {
 	ObjFileModel::xyz* Vector3 = new ObjFileModel::xyz;
@@ -33,6 +40,7 @@ ObjFileModel::xyz* Maths::CrossProduct(ObjFileModel::xyz* v1, ObjFileModel::xyz*
 	return Vector3;
 }
 
+//calculates the normal vector to a given triangle
 ObjFileModel::xyz* Maths::Normal(ObjFileModel::xyz* A, ObjFileModel::xyz* B, ObjFileModel::xyz* C)
 {
 
@@ -55,6 +63,7 @@ ObjFileModel::xyz* Maths::Normal(ObjFileModel::xyz* A, ObjFileModel::xyz* B, Obj
 
 }
 
+//Calculates and returns a Plane by using the PlaneEquation with three vectors
 Maths::Plane Maths::PlaneEquation(ObjFileModel::xyz* v1, ObjFileModel::xyz* v2, ObjFileModel::xyz* v3)
 {
 	//calculate the normal vector to the triangle
@@ -70,12 +79,14 @@ Maths::Plane Maths::PlaneEquation(ObjFileModel::xyz* v1, ObjFileModel::xyz* v2, 
 	return plane;
 }
 
+//returns a float value that determines if the given point is in front or behind the given plane
 float Maths::PlaneEquationForPoint(Plane p, ObjFileModel::xyz* v)
 {
 	float result = (p.normal.x * v->x) + (p.normal.y * v->y) + (p.normal.z * v->z) + p.d;
 	return result;
 }
 
+//Returns the intersection point betweeen a given plane and a ray if there is any
 ObjFileModel::xyz Maths::PlaneIntersection(Plane* plane, ObjFileModel::xyz* p1, ObjFileModel::xyz* p2)
 {
 	ObjFileModel::xyz* intersection = new ObjFileModel::xyz;
@@ -110,6 +121,7 @@ ObjFileModel::xyz Maths::PlaneIntersection(Plane* plane, ObjFileModel::xyz* p1, 
 
 }
 
+//returns true if the given point lies inside a given triangle
 bool Maths::InTriangle(ObjFileModel::xyz* A, ObjFileModel::xyz* B, ObjFileModel::xyz* C, ObjFileModel::xyz* P)
 {
 	ObjFileModel::xyz *vectorAP = new ObjFileModel::xyz;
@@ -160,6 +172,9 @@ bool Maths::InTriangle(ObjFileModel::xyz* A, ObjFileModel::xyz* B, ObjFileModel:
 	return false;
 }
 
+//returns -1 if the given number is smaller than 0,
+//returns 0 if given number == 0 or null
+//returns 1 if given number > 0
 int Maths::CheckSign(float number)
 {
 	return (number < 0.0f ? -1 : (number > 0.0f ? 1 : 0));

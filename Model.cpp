@@ -1,5 +1,9 @@
 #include "model.h"
+////////////////////////////////////////////////////////
+//Taken from the Tutorials provided in AGP by the course leader Philip Alassad.
+///////////////////////////////////////////////////////
 
+//Constructor
 Model::Model(ID3D11Device * device, ID3D11DeviceContext * deviceContext)
 {
 	m_pD3DDevice = device;
@@ -17,6 +21,7 @@ Model::Model(ID3D11Device * device, ID3D11DeviceContext * deviceContext)
 	m_pSampler0 = NULL;
 }
 
+//Destructor: releases constant buffers and shaders
 Model :: ~Model()
 {
 	if (m_pTransformationBuffer) m_pTransformationBuffer->Release();
@@ -27,6 +32,7 @@ Model :: ~Model()
 	delete m_pObject;
 }
 
+//Loads object from the given file and initialises graphics needed for drawing the object
 int Model::LoadObjModel(char * filename)
 {
 
@@ -135,14 +141,10 @@ int Model::LoadObjModel(char * filename)
 	CalculateBoundingSphereRadius();
 }
 
+//updates world matrix and constant buffers
+//draws the object attached to this model
 void Model::Draw(XMMATRIX* World, XMMATRIX * view, XMMATRIX * projection)
 {
-	/*XMMATRIX world1;
-	world1 = XMMatrixScaling(m_scale, m_scale, m_scale);
-	world1 *= XMMatrixRotationX(XMConvertToRadians(m_xangle));
-	world1 *= XMMatrixRotationY(XMConvertToRadians(m_yangle));
-	world1 *= XMMatrixRotationZ(XMConvertToRadians(m_zangle));
-	world1 *= XMMatrixTranslation(m_x, m_y, m_z);*/
 
 	//Set Transformation Buffer Values
 	TransformationBuffer model_cbTransformation_values;
@@ -153,11 +155,6 @@ void Model::Draw(XMMATRIX* World, XMMATRIX * view, XMMATRIX * projection)
 
 	// upload the new values for the transformation buffer
 	m_pImmediateContext->UpdateSubresource(m_pTransformationBuffer, 0, 0, &model_cbTransformation_values, 0, 0);
-
-
-	//m_DirectionalLightShinesFrom = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
-	//m_DirectionalLightColor = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
-	//m_AmbientLightColor = XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f);
 
 	//Set Light Buffer Values
 	LightBuffer model_cbLight_values;
@@ -191,6 +188,7 @@ void Model::Draw(XMMATRIX* World, XMMATRIX * view, XMMATRIX * projection)
 	m_pObject->Draw();
 }
 
+//lets the model face the given coordinates
 void Model::LookAt_XZ(float X, float Z)
 {
 	float DX = X - m_x;
@@ -199,12 +197,14 @@ void Model::LookAt_XZ(float X, float Z)
 	m_yangle = atan2(DX, DZ) * (180.0 / XM_PI);
 }
 
+//moves the model in z-axis
 void Model::MoveForwards(float Distance)
 {
 	m_x += sin(m_yangle * (XM_PI / 180.0)) * Distance;
 	m_z += cos(m_yangle * (XM_PI / 180.0)) * Distance;
 }
 
+//calculates the model centrepoint based on the vertices in the object
 void Model::CalculateModelCentrePoint()
 {
 	float MaxX = 0;
@@ -244,6 +244,7 @@ void Model::CalculateModelCentrePoint()
 	m_bounding_sphere_centre_z = MinZ + ((MaxZ - MinZ) / 2);
 }
 
+//calculates radius for a bounding sphere collision
 void Model::CalculateBoundingSphereRadius()
 {
 	float Distance = 0;
@@ -268,6 +269,8 @@ void Model::CalculateBoundingSphereRadius()
 
 }
 
+//Checks Collision with the given Model
+//Function is not used, but was planned to be used
 bool Model::CheckCollision(Model* Model)
 {
 	if (Model == this)
@@ -285,28 +288,19 @@ bool Model::CheckCollision(Model* Model)
 	float DistanceX = 0;
 	float DistanceY = 0;
 	float DistanceZ = 0;
-	//string DebugString = "";
 
 	// check: sphere collision on X plane
 	DistanceX = x1 - x2;
 	if (DistanceX < 0) DistanceX *= -1.0f;
 
-	/*DebugString = "Sphere Collision Check: Distance X= " + to_string(DistanceX) + "\n";
-	OutputDebugString(DebugString.c_str());*/
 
 	// check: sphere collision on Y plane
 	DistanceY = y1 - y2;
 	if (DistanceY < 0) DistanceY *= -1.0f;
 
-	/*DebugString = "Sphere Collision Check: Distance Y= " + to_string(DistanceY) + "\n";
-	OutputDebugString(DebugString.c_str());*/
-
 	// check: sphere collision on Z plane
 	DistanceZ = z1 - z2;
 	if (DistanceZ < 0)DistanceZ *= -1.0f;
-
-	/*DebugString = "Sphere Collision Check: Distance Z= " + to_string(DistanceZ) + "\n";
-	OutputDebugString(DebugString.c_str());*/
 
 	// check if collision is happening -> return true
 	if (DistanceX < (m_bounding_sphere_centre_radius + Model->GetBoundingSphereRadius())
@@ -317,6 +311,7 @@ bool Model::CheckCollision(Model* Model)
 	return false;
 }
 
+//Returns Model with the world space postion of the bounding sphere
 XMVECTOR Model::GetBoundingSphereWorldSpacePosition()
 {
 	XMMATRIX world;
@@ -349,16 +344,9 @@ float Model::GetBoundingSphereCentreZ() { return m_bounding_sphere_centre_z; }
 float Model::GetBoundingSphereRadius() { return m_bounding_sphere_centre_radius; }
 ObjFileModel* Model::GetModelObject() { return m_pObject; }
 
+//Set light values with values from the light class
 void Model::SetLight(XMFLOAT4 DirColor, XMFLOAT4 DirVector, XMFLOAT4 AmbColor)
 {
-	/*m_DirectionalLightColor = XMVectorSet(DirectionalLightColor.vector4_f32[0], DirectionalLightColor.vector4_f32[1], DirectionalLightColor.vector4_f32[2], 0.0f);
-	m_DirectionalLightShinesFrom = XMVectorSet(DirectionalLightShinesFrom.vector4_f32[0], DirectionalLightShinesFrom.vector4_f32[1], DirectionalLightShinesFrom.vector4_f32[2], 0.0f);
-	m_AmbientLightColor = XMVectorSet(AmbientLightColor.vector4_f32[0], AmbientLightColor.vector4_f32[1], AmbientLightColor.vector4_f32[2], 0.0f);*/
-
-	/*m_DirectionalLightColor = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
-	m_DirectionalLightShinesFrom = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
-	m_AmbientLightColor = XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f);*/
-
 	m_DirectionalLightColor = XMVectorSet(DirColor.x, DirColor.y, DirColor.z, DirColor.w);
 	m_DirectionalLightShinesFrom = XMVectorSet(DirVector.x, DirVector.y, DirVector.z, DirVector.w);
 	m_AmbientLightColor = XMVectorSet(AmbColor.x, AmbColor.y, AmbColor.z, AmbColor.w);

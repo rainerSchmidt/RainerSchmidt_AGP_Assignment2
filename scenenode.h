@@ -2,7 +2,6 @@
 #include "model.h"
 #define _XM_NO_INTINSICS_
 #define XM_NO_ALIGNMENT
-//#include <xnamath.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include "maths.h"

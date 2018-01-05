@@ -1,15 +1,18 @@
 #include "enemyai.h"
 
+//Constructor
 EnemyAI::EnemyAI()
 {
 	
 }
 
+//Destructor
 EnemyAI::~EnemyAI()
 {
 
 }
 
+//gives the instance the waypoints it navigates to when in patrol state
 void EnemyAI::SetWayPoints(SceneNode* P1, SceneNode* P2, SceneNode* P3)
 {
 	m_waypoints[0] = P1;
@@ -17,6 +20,8 @@ void EnemyAI::SetWayPoints(SceneNode* P1, SceneNode* P2, SceneNode* P3)
 	m_waypoints[2] = P3;
 }
 
+//enemy logic:
+//based on the distance to the player the state of the enemy is determened
 void EnemyAI::Logic(SceneNode* Node, SceneNode* RootNode, SceneNode* Collideables, SceneNode* Player)
 {
 	// Calculate distance to the player
@@ -50,16 +55,6 @@ void EnemyAI::Logic(SceneNode* Node, SceneNode* RootNode, SceneNode* Collideable
 			//move towards next waypoint
 			Node->LookAt_XZ(m_waypoints[m_waypointCounter]->GetX(), m_waypoints[m_waypointCounter]->GetZ());
 			Node->MoveForwards(m_speed, RootNode, Collideables, Player, false);
-			
-			//if (distanceX > distanceZ)
-			//{
-			//	//Node->Strafe((m_speed > distanceX ? distanceX : m_speed), RootNode, Collideables, Player, false);
-			//	
-			//}
-			//else
-			//{
-			//	Node->MoveForwards((m_speed > distanceZ ? distanceZ : m_speed), RootNode, Collideables, Player, false);
-			//}
 		}
 
 		break;

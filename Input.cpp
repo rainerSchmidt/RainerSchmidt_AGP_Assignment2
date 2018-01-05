@@ -1,11 +1,13 @@
 #include "input.h"
 
+//Constructor: sets member variables with Parameters
 Input::Input(HINSTANCE* HInst, HWND* HWnd)
 {
 	g_HInst = HInst;
 	g_HWnd = HWnd;
 }
 
+//Desctructor: releases input devices
 Input::~Input()
 {
 	if (g_keyboard_device)
@@ -21,6 +23,8 @@ Input::~Input()
 	}
 }
 
+//Initialises Input decices for use in the application
+//Taken from the Tutorials provided in AGP by the course leader Philip Alassad.
 HRESULT Input::InitialiseInput()
 {
 	HRESULT hr;
@@ -69,6 +73,8 @@ HRESULT Input::InitialiseInput()
 	return S_OK;
 }
 
+//Reads current input states for the devices
+//Taken from the Tutorials provided in AGP by the course leader Philip Alassad.
 void Input::ReadInputStates()
 {
 	HRESULT hr;
@@ -92,11 +98,15 @@ void Input::ReadInputStates()
 	}
 }
 
+//Returnes true if key that the KeyCode is assigned to is pressed.
+//Taken from the Tutorials provided in AGP by the course leader Philip Alassad.
 bool Input::IsKeyPressed(unsigned char Keycode)
 {
 	return g_keyboard_keys_state[Keycode] & 0x80;
 }
 
+//Logic for key inputs
+//Uses player and camera nodes to move them
 void Input::KeyLogic(Camera* Cam,SceneNode* RootNode, SceneNode* Node, SceneNode* Enemies)
 {
 	ReadInputStates();
@@ -140,6 +150,8 @@ void Input::KeyLogic(Camera* Cam,SceneNode* RootNode, SceneNode* Node, SceneNode
 	}
 }
 
+//Logic for mouse input
+//only rotates the y-axis
 void Input::MouseLogic(Camera* Cam, SceneNode* Node, SceneNode* RootNode)
 {
 	Cam->Rotate(g_mouse_state.lX* 0.5f);

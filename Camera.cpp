@@ -1,5 +1,6 @@
 #include "camera.h"
 
+//Constructor sets variables with start values
 Camera::Camera(float X, float Y, float Z, float RotationY)
 {
 	m_x = X;
@@ -11,11 +12,13 @@ Camera::Camera(float X, float Y, float Z, float RotationY)
 	m_dz = cos(m_camera_rotationY * (XM_PI / 180.0f));
 }
 
+//Destructor
 Camera::~Camera()
 {
 
 }
 
+//Rotates view by the given amount
 void Camera::Rotate(float Amount)
 {
 	m_camera_rotationY += Amount;
@@ -24,17 +27,20 @@ void Camera::Rotate(float Amount)
 	m_dz = cos(m_camera_rotationY * (XM_PI / 180.0f));
 }
 
+//Moves view further or back
 void Camera::Forward(float Distance)
 {
 	m_x += m_dx * Distance;
 	m_z += m_dz * Distance;
 }
 
+//Moves view in y-axis
 void Camera::MoveUp()
 {
 	m_y += m_velocityY;
 }
 
+//Moves view sideways
 void Camera::Strafe(float Distance)
 {
 	XMVECTOR right = XMVector3Cross((m_position - m_lookat), (m_up - m_position));
@@ -42,6 +48,7 @@ void Camera::Strafe(float Distance)
 	m_z += right.m128_f32[2] * Distance;
 }
 
+//Adds the given value to the velocity variable used for jumping
 void Camera::AddVelocityY(float Value)
 {
 	m_velocityY += Value;

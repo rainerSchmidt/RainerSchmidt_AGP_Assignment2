@@ -1,5 +1,6 @@
 #include "renderer.h"
 
+//Constructor: Iinitialise Camera and Collectable and sets members with Parameters
 Renderer::Renderer(ID3D11Device* D3DDevice, ID3D11DeviceContext* DeviceContext, IDXGISwapChain* SwapChain, ID3D11RenderTargetView* BackBuffer,
 					ID3D11DepthStencilView* ZBuffer, Input* Input)
 {
@@ -14,12 +15,18 @@ Renderer::Renderer(ID3D11Device* D3DDevice, ID3D11DeviceContext* DeviceContext, 
 	
 }
 
+//Destructor
 Renderer::~Renderer()
 {
 	//call CleanUp function
 	CleanUp();
 }
 
+//Initialises all SceneNodes for the SceneManagement
+//Initialises all Models used in the scene and provides them with textures
+//Loads textures from file
+//Initialises 2DText objects
+//Sets up SceneManagement
 HRESULT Renderer::InitialiseGraphicsElements()
 {
 	//initialise light values
@@ -137,11 +144,20 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	g_pCollectables[11] = new SceneNode(10.0f, -0.2f, 86.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 
 	//Obstacles
-	g_pObstacles[0] = new SceneNode(3.0f, 0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 5.0f);
-	g_pObstacles[1] = new SceneNode(-2.0f, 0.0f, 38.0f, 0.0f, 0.0f, 0.0f, 3.0f, 1.0f, 1.0f);
-	g_pObstacles[2] = new SceneNode(-8.0f, 0.0f, 34.0f, 0.0f, 0.0f, 0.0f, 3.0f, 1.0f, 1.0f);
-	g_pObstacles[3] = new SceneNode(12.0f, 0.0f, 67.0f, 0.0f, 0.0f, 0.0f, 7.0f, 1.0f, 1.0f);
-	g_pObstacles[4] = new SceneNode(-5.0f, 0.0f, 67.0f, 0.0f, 0.0f, 0.0f, 7.0f, 1.0f, 1.0f);
+	g_pObstacles[0] = new SceneNode(3.0f, 0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[1] = new SceneNode(3.0f, 0.0f, 27.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[2] = new SceneNode(3.0f, 0.0f, 29.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[3] = new SceneNode(3.0f, 0.0f, 32.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[4] = new SceneNode(3.0f, 0.0f, 34.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[5] = new SceneNode(3.0f, 0.0f, 36.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[6] = new SceneNode(-2.0f, 0.0f, 38.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[7] = new SceneNode(0.0f, 0.0f, 38.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[8] = new SceneNode(2.0f, 0.0f, 38.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[9] = new SceneNode(-4.0f, 0.0f, 38.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[10] = new SceneNode(-6.0f, 0.0f, 38.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[11] = new SceneNode(-8.0f, 0.0f, 34.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[12] = new SceneNode(12.0f, 0.0f, 67.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	g_pObstacles[13] = new SceneNode(-5.0f, 0.0f, 67.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 
 	//Moveables
 	g_pMoveable[0] = new SceneNode(3.5f, 0.0f, 67.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
@@ -187,7 +203,7 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	{
 		g_pCollideable->AddChildNode(g_pObstacles[i]);
 		g_pObstacles[i]->SetModel(g_pModelCube);
-		g_pObstacles[i]->SetTag(g_pObstacles[i]->Block);
+		g_pObstacles[i]->SetTag(g_pObstacles[i]->Moveable);
 	}
 
 	for (int i = 0; i < ARRAYSIZE(g_pMoveable); i++) //Moveables
@@ -210,45 +226,32 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	}
 
 	//set Text with font from file
-	g_pText2D = new Text2D("assets/font1.bmp", g_pD3DDevice, g_pImmediateContext);
+	g_pTextFrames = new Text2D("assets/font1.bmp", g_pD3DDevice, g_pImmediateContext);
+	g_pTextTime = new Text2D("assets/font1.bmp", g_pD3DDevice, g_pImmediateContext);
 	return S_OK;
 }
 
 void Renderer::ClearBackBuffer()
 {
-	//// Clear the back buffer - choose a colour you like
+	// Clear the back buffer
 	float rgba_clear_colour[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
 	g_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
+//Executes RootNode which draws all Objects in the SceneManagement
 void Renderer::Draw()
 {
-
-	// Draw the vertex buffer to the back buffer //03-01
-	OutputDebugString("Draw");
-
 	/*XMMATRIX world, view, projection;*/
 	XMMATRIX view, projection;
-
-	/*world = XMMatrixScaling(1.0f, 1.0f, 1.0f);
-	world *= XMMatrixRotationX(XMConvertToRadians(0.0f));
-	world *= XMMatrixRotationY(XMConvertToRadians(0.0f));
-	world *= XMMatrixRotationZ(XMConvertToRadians(0.0f));
-	world *= XMMatrixTranslation(0.0f, 0.0f, 15.0f);*/
 
 	view = XMMatrixIdentity();
 	view = g_pCamera->GetViewMatrix();
 
 	projection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0f), 800.0f / 600.0f, 0.01f, 100.0f);
 
-	////Draw Models
-	//g_pModel->Draw(&world, &view, &projection);
-
 	//Execute RootNode
 	g_pRootNode->Execute(&XMMatrixIdentity(), &view, &projection);
-
-	//g_pImmediateContext->Draw(36, 0);
 }
 
 void Renderer::FrameLimit()
@@ -273,22 +276,28 @@ void Renderer::FrameLimit()
 	endTime = chrono::system_clock::now();
 
 	//show frames
-	g_pText2D->AddText("Frames: " + to_string(1000 / (frameDuration + sleepTime).count()), -1.0f, 1.0f, 0.05f);
-	g_pText2D->RenderText();
+	g_pTextFrames->AddText("Frames: " + to_string(1000 / (frameDuration + sleepTime).count()), -1.0f, 1.0f, 0.05f);
+	g_pTextFrames->RenderText();
+
+	//show time
+	g_time += (1000 / (frameDuration + sleepTime).count());
+	g_pTextTime->AddText("Time: "+ to_string(g_time) + "ms", -1.0f, 0.9f, 0.05f);
+	g_pTextTime->RenderText(); 
 }
 
+//Is called by MessageLoop from Main
+//calls all needed functions for one frame
+//calls input logic
+//calls collectables and enemies logic
+//checks if camera is in the same place as the player node
+//calls swapchain
 void Renderer::RenderFrame()
 {
 
 	
-	Gravity();
+	
 	ClearBackBuffer();
-	/*SetLighting();
-	SetVertexBuffer();
-	SetWorldMatrix();
-	SetLightWorldMatrix();
-	SetConstantBuffer();
-	SetWorldViewProjection();*/
+	Gravity();
 
 	// Select which primitive type to use //03-01
 	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -324,6 +333,7 @@ void Renderer::RenderFrame()
 	g_pSwapChain->Present(0, 0);
 }
 
+//Applies negative y-Movement to the player when he is in midair
 void Renderer::Gravity()
 {
 	//apply gravity to vertical velocity if player is over ground
@@ -364,18 +374,10 @@ void Renderer::Gravity()
 	}
 }
 
+//releases Texture pointers
+//deletes used objects
 void Renderer::CleanUp()
 {
-	/*if (g_pVertexBuffer) g_pVertexBuffer->Release();
-	if (g_pZBuffer) g_pZBuffer->Release();
-	if (g_pTexture) g_pTexture->Release();
-	if (g_pSampler) g_pSampler->Release();
-	if (g_pSwapChain) g_pSwapChain->Release();
-	if (g_pImmediateContext) g_pImmediateContext->Release();
-	if (g_pD3DDevice) g_pD3DDevice->Release();
-	if (g_pBackBufferRTView) g_pBackBufferRTView->Release();
-	if (g_pTransformationBuffer) g_pTransformationBuffer->Release();
-	if (g_pLightBuffer) g_pLightBuffer->Release();*/
 	if(g_pCamera) delete g_pCamera;
 
 	//Enemies
@@ -384,6 +386,7 @@ void Renderer::CleanUp()
 		if(g_pEnemies[i]) delete g_pEnemies[i];
 	}
 
+	//Collectable
 	if (g_pCollectable) delete g_pCollectable;
 
 
@@ -398,21 +401,5 @@ void Renderer::CleanUp()
 	if (g_pModelCube) delete g_pModelCube;
 	if (g_pModelSphere) delete g_pModelSphere;
 	if (g_pLight) delete g_pLight;
-
-	////detach child nodes from RootNode and delete child nodes
-	//if (g_pPlayer)
-	//{
-	//	g_pRootNode->DetatchNode(g_pPlayer);
-	//	delete g_pPlayer;
-	//}
-	//if (g_pEnemy)
-	//{
-	//	delete g_pEnemy;
-	//}
-
-	////delete RootNode
-	//if (g_pRootNode) delete g_pRootNode;
-
-	//if (g_pText2D) delete g_pText2D;
 	
 }

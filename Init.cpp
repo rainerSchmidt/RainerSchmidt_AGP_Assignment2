@@ -4,6 +4,7 @@ int (WINAPIV* __vsnprintf_s)(char*, size_t, const char*, va_list) = _vsnprintf;
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Called every time the application receives a message || NEEDS TO BE GLOBAL!!!
+////taken from the AGP - Tutorials in the unit led by Philip Alassad
 //////////////////////////////////////////////////////////////////////////////////////
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -28,11 +29,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+//Constructor
 Init::Init()
 {
 	
 }
 
+//Initialises the application window
+//sets the important hIstance and hWnd
+//taken from the AGP - Tutorials in the unit led by Philip Alassad
 HRESULT Init::InitialiseWindow(HINSTANCE hInstance, int nCmdShow)
 {
 	//Initialise the application window
@@ -68,6 +73,9 @@ HRESULT Init::InitialiseWindow(HINSTANCE hInstance, int nCmdShow)
 	return S_OK;
 }
 
+//Initialises necessary DirectX components
+//includes ZBuffer initialisation
+//taken from the AGP - Tutorials in the unit led by Philip Alassad
 HRESULT Init::InitialiseD3D()
 {
 	//Initialise the DirectX components

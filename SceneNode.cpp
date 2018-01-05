@@ -1,5 +1,6 @@
 #include "scenenode.h"
 
+//Constructor: sets member with parameter
 SceneNode::SceneNode(float X, float Y, float Z, float RotX, float RotY, float RotZ, float ScaleX, float ScaleY, float ScaleZ)
 {
 	m_pModel = NULL;
@@ -15,11 +16,14 @@ SceneNode::SceneNode(float X, float Y, float Z, float RotX, float RotY, float Ro
 	m_scaleZ = ScaleZ;
 }
 
+//Adds a child node to this node
 void SceneNode::AddChildNode(SceneNode* Node)
 {
 	m_children.push_back(Node);
 }
 
+//Detaches the given node from this node
+//Not used, planned to use for animations
 bool SceneNode::DetatchNode(SceneNode* Node)
 {
 	//traverse tree to find node to detatch
@@ -36,6 +40,8 @@ bool SceneNode::DetatchNode(SceneNode* Node)
 	return false; //note not in this tree
 }
 
+//updates local world matrix and draws objects attached
+//goes recursively through each child node
 void SceneNode::Execute(XMMATRIX* World, XMMATRIX* View, XMMATRIX* Projection)
 {
 	//the local_world_matrix will be used to calc the local transformations fir this node
@@ -61,6 +67,7 @@ void SceneNode::Execute(XMMATRIX* World, XMMATRIX* View, XMMATRIX* Projection)
 	}	
 }
 
+//lets the node face towards the given coordinates
 void SceneNode::LookAt_XZ(float X, float Z)
 {
 	float DX = X - m_x;
@@ -69,6 +76,8 @@ void SceneNode::LookAt_XZ(float X, float Z)
 	m_yangle = atan2(DX, DZ) * (180.0 / XM_PI);
 }
 
+//moves the node forward by the given amount and updates collision tree
+//restores old position if collision occured
 bool SceneNode::MoveForwards(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, SceneNode* Player, bool CollisionCheck)
 {
 	float old_x = m_x;
@@ -79,9 +88,6 @@ bool SceneNode::MoveForwards(float Distance, SceneNode* RootNode, SceneNode* Col
 
 	XMMATRIX Identity = XMMatrixIdentity();
 
-	//since state has changed, need to update collision tree
-	//this basic system requires entire hierarchy to be updated
-	//so start at root_node passing in identity matrix
 	RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
 	if (CollisionCheck)
 	{
@@ -98,6 +104,8 @@ bool SceneNode::MoveForwards(float Distance, SceneNode* RootNode, SceneNode* Col
 	return false;
 }
 
+//moves the node in y-axis and updates the collision tree
+//restores old position if collision would occur
 bool SceneNode::MoveUp(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, SceneNode* Player, bool CollisionCheck)
 {
 	float old_y = m_y;
@@ -105,9 +113,6 @@ bool SceneNode::MoveUp(float Distance, SceneNode* RootNode, SceneNode* Collision
 
 	XMMATRIX Identity = XMMatrixIdentity();
 
-	//since state has changed, need to update collision tree
-	//this basic system requires entire hierarchy to be updated
-	//so start at root_node passing in identity matrix
 	RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
 	if (CollisionCheck)
 	{
@@ -123,6 +128,8 @@ bool SceneNode::MoveUp(float Distance, SceneNode* RootNode, SceneNode* Collision
 	return false;
 }
 
+//moves the node in x-axis and updates the collision tree
+//restores old position if collision would occur
 bool SceneNode::Strafe(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, SceneNode* Player, bool CollisionCheck)
 {
 	float old_x = m_x;
@@ -157,22 +164,22 @@ bool SceneNode::Strafe(float Distance, SceneNode* RootNode, SceneNode* Collision
 
 }
 
+//rotates the node by the given amount in y-axis and updates collision tree
 void SceneNode::Rotate(float Amount, SceneNode* RootNode, SceneNode* Player)
 {
 	m_yangle += Amount;
 	XMMATRIX Identity = XMMatrixIdentity();
 
-	//since state has changed, need to update collision tree
-	//this basic system requires entire hierarchy to be updated
-	//so start at root_node passing in identity matrix
 	RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
 }
 
+//only called by the rootnode, calles other checkcollision function
 bool SceneNode::CheckCollision(SceneNode* CompareTree)
 {
 	return CheckCollision(CompareTree, this);
 }
 
+//Bounding sphere collision check, returns true if collision occured
 bool SceneNode::CheckCollision(SceneNode* CompareTree, SceneNode* ObjectTreeRoot)
 {
 	// check to see if root of tree being compared is same as root node of object tree being checked
@@ -223,6 +230,7 @@ bool SceneNode::CheckCollision(SceneNode* CompareTree, SceneNode* ObjectTreeRoot
 	return false;
 }
 
+//updates local world matrix for every object in the scene to ensure correct collision calculations
 void SceneNode::UpdateCollisionTree(XMMATRIX* World, float Scale, SceneNode* Player)
 {
 
@@ -267,6 +275,8 @@ void SceneNode::UpdateCollisionTree(XMMATRIX* World, float Scale, SceneNode* Pla
 
 }
 
+//Collision check for every vertex of an object
+//If collision, tag of the node determines action taken
 bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY, float DirPosZ, SceneNode* RootNode)
 {
 	XMVECTOR rayStart = XMVectorSet(Node->GetX(), Node->GetY(), Node->GetZ(), 0.0);
@@ -378,10 +388,6 @@ bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY,
 							//You have been hit by the enemy, the player is send back to the beginning;
 							Node->MoveForwards(-1*(Node->GetZ()), RootNode, NULL, Node, false);
 							Node->Strafe(-1 * (Node->GetX()), RootNode, NULL, Node, false);
-
-							//calling the moveforwards function will update the collision tree and
-							//make a check if the other objects need to be considered for collision detection.
-							//Node->MoveForwards(0.0f, RootNode, NULL, Node, false);
 						}
 
 						if (m_tag == Goal)
@@ -410,6 +416,7 @@ bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY,
 	return false;
 }
 
+//Moves the node away from the player
 void SceneNode::MoveAway(float Distance, bool Direction, SceneNode* RootNode, SceneNode* Player)
 {
 	if (Direction)
@@ -435,6 +442,7 @@ void SceneNode::MoveAway(float Distance, bool Direction, SceneNode* RootNode, Sc
 	}
 }
 
+//checks if node is close to player position
 void SceneNode::CheckIfCloseToPlayer(SceneNode* Player)
 {
 	if (m_IsDrawn)// when the object is not drawn dont calculate collisions

@@ -1,12 +1,3 @@
-//#include <windows.h>
-//#include <d3d11.h>
-//#include <d3dx11.h>
-//#include <dxerr.h>
-//#include <stdio.h>
-//#define _XM_NO_INTINSICS_
-//#define XM_NO_ALIGNMENT
-//#include <xnamath.h>
-
 #include "init.h";
 #include "renderer.h";
 #include "input.h"

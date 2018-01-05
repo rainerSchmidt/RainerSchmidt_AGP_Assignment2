@@ -1,5 +1,7 @@
 #include "Text2D.h"
-
+///////////////////////////////////////////////////////////////////////////////
+//Taken from the tutorials provided in AGP by the course leader Philip Alassad
+///////////////////////////////////////////////////////////////////////////////
 // constructor does not handle fails gracefully for simplicity, simply exits
 // track errors by looking at debug output or using debugger
 // scope for more advanced code to improve error handling
