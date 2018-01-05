@@ -47,15 +47,17 @@ void Camera::AddVelocityY(float Value)
 	m_velocityY += Value;
 }
 
+//__________________________________________________SETTER
+void Camera::SetX(float value) { m_x = value; }
+void Camera::SetY(float Value) { m_y = Value; }
+void Camera::SetZ(float value) { m_x = value; }
+
 void Camera::SetVelocityY(float Value)
 {
 	m_velocityY = Value;
 }
 
-void Camera::SetY(float Value)
-{
-	m_y = Value;
-}
+
 
 //__________________________________________________GETTER
 XMMATRIX Camera::GetViewMatrix()

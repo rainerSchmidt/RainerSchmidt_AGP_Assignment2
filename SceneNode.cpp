@@ -51,8 +51,8 @@ void SceneNode::Execute(XMMATRIX* World, XMMATRIX* View, XMMATRIX* Projection)
 	//transformations of all parent nodes so that this nodes transformations are relative to those
 	local_world *= *World;
 
-	//only draw if there is a model attached
-	if (m_pModel) m_pModel->Draw(&local_world, View, Projection);
+	//only draw if there is a model attached and the object is supposed to be drawn
+	if (m_pModel && m_IsDrawn) m_pModel->Draw(&local_world, View, Projection);
 
 	//traverse all child nodes, passing in the concatenated world matrix
 	for (int i = 0; i < m_children.size(); i++)
@@ -85,7 +85,7 @@ bool SceneNode::MoveForwards(float Distance, SceneNode* RootNode, SceneNode* Col
 	RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
 	if (CollisionCheck)
 	{
-		if (CollisionObjects->CheckCollisionRay(this, m_x, m_y, m_z) == true)
+		if (CollisionObjects->CheckCollisionRay(this, m_x, m_y, m_z, RootNode) == true)
 		{
 			// if collision restore state
 			m_x = old_x;
@@ -111,7 +111,7 @@ bool SceneNode::MoveUp(float Distance, SceneNode* RootNode, SceneNode* Collision
 	RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
 	if (CollisionCheck)
 	{
-		if (CollisionObjects->CheckCollisionRay(this, m_x, m_y, m_z) == true)
+		if (CollisionObjects->CheckCollisionRay(this, m_x, m_y, m_z, RootNode) == true)
 		{
 			// if collision restore state
 			m_y = old_y;
@@ -143,7 +143,7 @@ bool SceneNode::Strafe(float Distance, SceneNode* RootNode, SceneNode* Collision
 	RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
 	if (CollisionCheck)
 	{
-		if (CollisionObjects->CheckCollisionRay(this, m_x, m_y, m_z) == true)
+		if (CollisionObjects->CheckCollisionRay(this, m_x, m_y, m_z, RootNode) == true)
 		{
 			// if collision restore state
 			m_x = old_x;
@@ -267,7 +267,7 @@ void SceneNode::UpdateCollisionTree(XMMATRIX* World, float Scale, SceneNode* Pla
 
 }
 
-bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY, float DirPosZ)
+bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY, float DirPosZ, SceneNode* RootNode)
 {
 	XMVECTOR rayStart = XMVectorSet(Node->GetX(), Node->GetY(), Node->GetZ(), 0.0);
 
@@ -346,8 +346,53 @@ bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY,
 				if (intersectionPoint->x != 0 || intersectionPoint->y != 0 || intersectionPoint->z != 0)
 				{	//Intersection point was calculated
 					//check if intersection point is in the current triangle
-					if(Maths::InTriangle(vectorP1, vectorP2, vectorP3, intersectionPoint))
+					if (Maths::InTriangle(vectorP1, vectorP2, vectorP3, intersectionPoint))
+					{
+
+						//Collision : check object tag to determine actions
+						if(m_tag == Collectable) m_IsDrawn = false; //if object is an Collectable, no longer show the object
+
+						if (m_tag == Moveable) //if object is moveable, move the object away from the player
+						{
+							//calculate difference in x- and z-axis between this Node and the Player
+							float diffX = m_x - Node->GetX();
+							float diffZ = m_z - Node->GetZ();
+							bool signX = false;
+							bool signZ = false;
+							if (diffX < 0) { diffX *= -1; signX = true; }
+							if (diffZ < 0) { diffZ *= -1; signZ = true; }
+							
+							//if z difference is higher move object in z direction, else in x direction
+							if (diffX > diffZ)
+							{
+								this->MoveAway(signZ? -0.5 : 0.5, false, RootNode, Node);
+							}
+							else
+							{
+								this->MoveAway(signX ? -0.5 : 0.5, true, RootNode, Node);
+							}
+						}
+
+						if (m_tag == Enemy)
+						{
+							//You have been hit by the enemy, the player is send back to the beginning;
+							Node->SetPosX(0.0f);
+							Node->SetPosY(0.0f);
+							Node->SetPosZ(3.0f);
+
+							//calling the moveforwards function will update the collision tree and
+							//make a check if the other objects need to be considered for collision detection.
+							Node->MoveForwards(0.0f, RootNode, NULL, Node, false);
+						}
+
+						if (m_tag == Goal)
+						{
+							// You won!!!
+						}
+							
 						return true; //collsion happend and intersection point lies inside the current triangle
+					}
+						
 				}
 				// no collision was detected in this triangle, continue with next triangle
 			}
@@ -357,7 +402,7 @@ bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY,
 	//traverse all child nodes, passing in the concatenated world matrix
 	for (int i = 0; i < m_children.size(); i++)
 	{
-		if (m_children[i]->CheckCollisionRay(Node, DirPosX, DirPosY, DirPosZ))
+		if (m_children[i]->CheckCollisionRay(Node, DirPosX, DirPosY, DirPosZ, RootNode))
 			return true;
 	}
 	
@@ -366,12 +411,43 @@ bool SceneNode::CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY,
 	return false;
 }
 
+void SceneNode::MoveAway(float Distance, bool Direction, SceneNode* RootNode, SceneNode* Player)
+{
+	if (Direction)
+	{
+		m_x += sin(m_yangle * (XM_PI / 180.0)) * Distance;
+		m_z += cos(m_yangle * (XM_PI / 180.0)) * Distance;
+
+		XMMATRIX Identity = XMMatrixIdentity();
+		RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
+	}
+	else
+	{
+		XMVECTOR position = XMVectorSet(m_x, m_y, m_z, 0.0f);
+		XMVECTOR lookat = XMVectorSet(m_x + sin(m_yangle * (XM_PI / 180.0f)), m_y, m_z + cos(m_yangle * (XM_PI / 180.0f)), 0.0);
+		XMVECTOR up = XMVectorSet(0.0, 1.0, 0.0, 0.0);
+		XMVECTOR right = XMVector3Cross((position - lookat), (up - position));
+		m_x += right.vector4_f32[0] * Distance;
+		m_z += right.vector4_f32[2] * Distance;
+
+		XMMATRIX Identity = XMMatrixIdentity();
+
+		RootNode->UpdateCollisionTree(&Identity, 1.0, Player);
+	}
+}
+
 void SceneNode::CheckIfCloseToPlayer(SceneNode* Player)
 {
-	if ((Player->GetZ() - m_z) > -2.0f && (Player->GetZ() - m_z) < 2.0f)
-		m_IsCollideable = true;
+	if (m_IsDrawn)// when the object is not drawn dont calculate collisions
+	{
+		if ((Player->GetZ() - m_z) > -2.0f && (Player->GetZ() - m_z) < 2.0f)
+			m_IsCollideable = true;
+		else
+			m_IsCollideable = false;
+	}
 	else
 		m_IsCollideable = false;
+	
 }
 
 //SETTER
@@ -385,6 +461,7 @@ void SceneNode::SetRotZ(float Amount) { m_zangle = Amount; }
 //void SceneNode::SetScale(float Amount) { m_scale = Amount; }
 void SceneNode::SetModel(Model* Model) { m_pModel = Model; }
 void SceneNode::SetTag(SceneNode::Tag NodeTag) { m_tag = NodeTag; }
+void SceneNode::SetIsDrawn(bool Status) { m_IsDrawn = Status; }
 
 //GETTER
 Model* SceneNode::GetModel() { return m_pModel; };

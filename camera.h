@@ -24,7 +24,9 @@ public:
 	float GetVelocityY();
 	void AddVelocityY(float Value);
 	void SetVelocityY(float Value);
+	void SetX(float Value);
 	void SetY(float Value);
+	void SetZ(float Value);
 
 	XMMATRIX GetViewMatrix();
 

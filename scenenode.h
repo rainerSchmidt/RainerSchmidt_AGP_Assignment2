@@ -11,10 +11,10 @@ using namespace DirectX;
 
 class SceneNode
 {
-
+	
 public:
 
-	enum Tag { Player, Enemy, Collectable, Block, Other };
+	enum Tag { Player, Enemy, Collectable, Block, Moveable, Goal};
 
 	SceneNode(float X, float Y, float Z, float RotX, float RotY, float RotZ, float ScaleX, float ScaleY, float ScaleZ);
 	~SceneNode();
@@ -23,12 +23,12 @@ public:
 	void LookAt_XZ(float X, float Z);
 	void Rotate(float Amount, SceneNode* RootNode, SceneNode* Player);
 	bool MoveForwards(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, SceneNode* Player, bool CollisionCheck);
-	bool MoveUp(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, SceneNode*, bool CollisionCheck);
+	bool MoveUp(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, SceneNode* Player, bool CollisionCheck);
 	bool Strafe(float Distance, SceneNode* RootNode, SceneNode* CollisionObjects, SceneNode* Player, bool CollisionCheck);
 	bool CheckCollision(SceneNode* CompareTree);
 	bool CheckCollision(SceneNode* CompareTree, SceneNode* ObjectTreeRoot);
 	void UpdateCollisionTree(XMMATRIX* World, float Scale, SceneNode* Player);
-	bool CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY, float DirPosZ);
+	bool CheckCollisionRay(SceneNode* Node, float DirPosX, float DirPosY, float DirPosZ, SceneNode* RootNode);
 	void CheckIfCloseToPlayer(SceneNode* Player);
 
 	float GetX();
@@ -54,6 +54,7 @@ public:
 	void SetScale(float amount);
 	void SetModel(Model* Model);
 	void SetTag(Tag NodeTag);
+	void SetIsDrawn(bool status);
 
 	void AddChildNode(SceneNode* Node);
 	bool DetatchNode(SceneNode* Node);
@@ -70,5 +71,8 @@ private:
 	float m_world_centerX, m_world_centerY, m_world_centerZ;
 	float m_world_scale;
 	bool m_IsCollideable = false;
+	bool m_IsDrawn = true;
 	Tag m_tag;
+
+	void MoveAway(float Distance, bool Direction, SceneNode* RootNode, SceneNode* Player);
 };

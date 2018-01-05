@@ -12,6 +12,7 @@
 #include "input.h"
 #include "camera.h"
 #include "lighting.h"
+#include "collectable.h"
 #include <chrono>
 #include <thread>
 using namespace DirectX;
@@ -44,6 +45,7 @@ class Renderer
 		Input*							g_pInput;
 		Camera*							g_pCamera;
 		Light*							g_pLight;
+		Collectable*					g_pCollectable;
 
 		//Models 
 		Model*							g_pModelPlane;

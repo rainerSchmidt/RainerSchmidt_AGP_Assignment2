@@ -10,6 +10,7 @@ Renderer::Renderer(ID3D11Device* D3DDevice, ID3D11DeviceContext* DeviceContext, 
 	g_pZBuffer = ZBuffer;
 	g_pInput = Input;
 	g_pCamera = new Camera(0.0, 0.0, 3.0, 0.0);
+	g_pCollectable = new Collectable();
 	
 }
 
@@ -140,6 +141,7 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	{
 		g_pCollideable->AddChildNode(g_pEnemies[i]);
 		g_pEnemies[i]->SetModel(g_pModelPyramid);
+		g_pEnemies[i]->SetTag(g_pEnemies[i]->Enemy);
 
 		SceneNode* Node = new SceneNode(0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.2f, 0.2f, 0.2f);
 		Node->SetModel(g_pModelSphere);
@@ -151,18 +153,21 @@ HRESULT Renderer::InitialiseGraphicsElements()
 	{
 		g_pCollideable->AddChildNode(g_pCollectables[i]);
 		g_pCollectables[i]->SetModel(g_pModelCoin);
+		g_pCollectables[i]->SetTag(g_pCollectables[i]->Collectable);
 	}
 
 	for (int i = 0; i < ARRAYSIZE(g_pObstacles); i++) //Obstacles
 	{
 		g_pCollideable->AddChildNode(g_pObstacles[i]);
 		g_pObstacles[i]->SetModel(g_pModelCube);
+		g_pObstacles[i]->SetTag(g_pObstacles[i]->Block);
 	}
 
 	for (int i = 0; i < ARRAYSIZE(g_pMoveable); i++) //Moveables
 	{
 		g_pCollideable->AddChildNode(g_pMoveable[i]);
 		g_pMoveable[i]->SetModel(g_pModelCube);
+		g_pMoveable[i]->SetTag(g_pMoveable[i]->Moveable);
 	}
 
 	
@@ -255,6 +260,25 @@ void Renderer::RenderFrame()
 	// Select which primitive type to use //03-01
 	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	//Collectables Logic
+	for (int i = 0;i < ARRAYSIZE(g_pCollectables); i++)
+	{
+		g_pCollectable->Logic(g_pCollectables[i], g_pRootNode, g_pPlayer);
+	}
+
+	//Enemy Logic
+	//...
+
+	////Camera check
+	//if ((g_pCamera->GetX() - g_pPlayer->GetX()) > 0.2f || (g_pCamera->GetX() - g_pPlayer->GetX()) > -0.2f
+	//	|| (g_pCamera->GetY() - g_pPlayer->GetY()) > 0.2f || (g_pCamera->GetY() - g_pPlayer->GetY()) > -0.2f
+	//	|| (g_pCamera->GetZ() - g_pPlayer->GetZ()) > 0.2f || (g_pCamera->GetZ() - g_pPlayer->GetZ()) > -0.2f)
+	//{
+	//	g_pCamera->SetX(g_pPlayer->GetX());
+	//	g_pCamera->SetY(g_pPlayer->GetY());
+	//	g_pCamera->SetZ(g_pPlayer->GetZ());
+	//}
+	
 	g_pInput->KeyLogic(g_pCamera, g_pRootNode, g_pPlayer, g_pCollideable);
 	g_pInput->MouseLogic(g_pCamera, g_pPlayer, g_pRootNode);
 	FrameLimit();
